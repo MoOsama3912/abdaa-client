@@ -8,6 +8,78 @@
     <link rel="stylesheet" href="new-styles.css" />
     <link rel="stylesheet" href="enhanced-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            .status-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .status-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .status-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            .status-card .icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 15px;
+                font-size: 1.5rem;
+                color: white;
+            }
+
+            .status-card .details {
+                flex: 1;
+            }
+
+            .status-card h3 {
+                margin: 0;
+                font-size: 1.1rem;
+                color: var(--gray-700);
+            }
+
+            .status-card .count {
+                font-size: 1.8rem;
+                font-weight: bold;
+                margin-top: 5px;
+            }
+
+            /* تنسيق الألوان لكل حالة */
+            .status-card.total .icon { background: var(--primary-color); }
+            .status-card.waiting-call .icon { background: #3B82F6; }
+            .status-card.interested .icon { background: #10B981; }
+            .status-card.not-interested .icon { background: #EF4444; }
+            .status-card.thinking .icon { background: #F59E0B; }
+            .status-card.meeting .icon { background: #8B5CF6; }
+            .status-card.confirmed .icon { background: #059669; }
+            .status-card.wrong-number .icon { background: #6B7280; }
+
+            /* تنسيق العدادات */
+            .status-card.total .count { color: var(--primary-color); }
+            .status-card.waiting-call .count { color: #3B82F6; }
+            .status-card.interested .count { color: #10B981; }
+            .status-card.not-interested .count { color: #EF4444; }
+            .status-card.thinking .count { color: #F59E0B; }
+            .status-card.meeting .count { color: #8B5CF6; }
+            .status-card.confirmed .count { color: #059669; }
+            .status-card.wrong-number .count { color: #6B7280; }
+        </style>
 </head>
 <body>
     <div class="gradient-bg"></div>

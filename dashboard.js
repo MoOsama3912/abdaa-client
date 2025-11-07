@@ -14,6 +14,68 @@ async function fetchClients() {
   }
 }
 
+  document.addEventListener('DOMContentLoaded', async function() {
+    try {
+      // جلب بيانات العملاء
+      const response = await fetch(`${window.API_BASE}/clients`);
+      if (!response.ok) throw new Error('فشل في جلب البيانات');
+      const clients = await response.json();
+
+      // تحديث العدادات
+      const counts = {
+        total: clients.length,
+        'مكالمة منتظرة': 0,
+        'مهتم متابعة': 0,
+        'غير مهتم': 0,
+        'محتمل بيفكر': 0,
+        'مقابلة في المقر': 0,
+        'تبرع مؤكد': 0,
+        'رقم خطأ': 0
+      };
+
+      // حساب عدد العملاء في كل حالة
+      clients.forEach(client => {
+        if (counts.hasOwnProperty(client.status)) {
+          counts[client.status]++;
+        }
+      });
+
+      // تحديث العرض
+      document.getElementById('total-count').textContent = counts.total;
+      document.getElementById('waiting-call-count').textContent = counts['مكالمة منتظرة'];
+      document.getElementById('interested-count').textContent = counts['مهتم متابعة'];
+      document.getElementById('not-interested-count').textContent = counts['غير مهتم'];
+      document.getElementById('thinking-count').textContent = counts['محتمل بيفكر'];
+      document.getElementById('meeting-count').textContent = counts['مقابلة في المقر'];
+      document.getElementById('confirmed-count').textContent = counts['تبرع مؤكد'];
+      document.getElementById('wrong-number-count').textContent = counts['رقم خطأ'];
+
+      // تحديث البحث السريع
+      const quickSearch = document.getElementById('quick-search');
+      if (quickSearch) {
+        quickSearch.addEventListener('input', async function() {
+          const searchTerm = this.value.trim();
+          if (searchTerm.length < 2) return;
+
+          try {
+            const searchResponse = await fetch(`${window.API_BASE}/clients/search?q=${encodeURIComponent(searchTerm)}`);
+            if (!searchResponse.ok) throw new Error('فشل في البحث');
+            const results = await searchResponse.json();
+                    
+            // عرض نتائج البحث (يمكنك تخصيص طريقة العرض)
+            console.log('نتائج البحث:', results);
+          } catch (error) {
+            console.error('خطأ في البحث:', error);
+          }
+        });
+      }
+
+    } catch (error) {
+      console.error('خطأ:', error);
+      // عرض رسالة خطأ للمستخدم
+      alert('حدث خطأ في تحميل البيانات. يرجى تحديث الصفحة.');
+    }
+  });
 function updateStats() {
   const counts = {};
   allClients.forEach(c => { counts[c.status] = (counts[c.status] || 0) + 1; });
