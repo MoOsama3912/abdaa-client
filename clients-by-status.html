@@ -7,12 +7,87 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="new-styles.css">
     <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--gray-600);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: var(--primary-color);
+        }
+
+        .delegates-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 0 20px 20px 20px;
+        }
+
+        .delegates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .delegate-card {
+            background: var(--gray-50);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .delegate-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .delegate-stats {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+
         .clients-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             padding: 20px;
         }
+
+        /* تنسيق حالات العملاء */
+        .status-waiting-call { border-right: 4px solid #3B82F6; }
+        .status-interested { border-right: 4px solid #10B981; }
+        .status-not-interested { border-right: 4px solid #EF4444; }
+        .status-thinking { border-right: 4px solid #F59E0B; }
+        .status-meeting { border-right: 4px solid #8B5CF6; }
+        .status-confirmed { border-right: 4px solid #059669; }
+        .status-wrong-number { border-right: 4px solid #6B7280; }
+        .all-clients { border-right: 4px solid var(--primary-color); }
 
         .client-card {
             background: white;
@@ -107,9 +182,56 @@
     </header>
 
     <main class="content-container">
-        <h2 id="status-title">العملاء حسب الحالة</h2>
+        <h2 id="status-title">إحصائيات العملاء</h2>
+        
+        <!-- إحصائيات الحالات -->
+        <div class="stats-grid">
+            <div class="stat-card all-clients">
+                <h3>إجمالي العملاء</h3>
+                <div class="stat-number" id="total-clients">0</div>
+            </div>
+            <div class="stat-card status-waiting-call">
+                <h3>مكالمة منتظرة</h3>
+                <div class="stat-number" id="waiting-call-count">0</div>
+            </div>
+            <div class="stat-card status-interested">
+                <h3>مهتم متابعة</h3>
+                <div class="stat-number" id="interested-count">0</div>
+            </div>
+            <div class="stat-card status-not-interested">
+                <h3>غير مهتم</h3>
+                <div class="stat-number" id="not-interested-count">0</div>
+            </div>
+            <div class="stat-card status-thinking">
+                <h3>محتمل بيفكر</h3>
+                <div class="stat-number" id="thinking-count">0</div>
+            </div>
+            <div class="stat-card status-meeting">
+                <h3>مقابلة في المقر</h3>
+                <div class="stat-number" id="meeting-count">0</div>
+            </div>
+            <div class="stat-card status-confirmed">
+                <h3>تبرع مؤكد</h3>
+                <div class="stat-number" id="confirmed-count">0</div>
+            </div>
+            <div class="stat-card status-wrong-number">
+                <h3>رقم خطأ</h3>
+                <div class="stat-number" id="wrong-number-count">0</div>
+            </div>
+        </div>
+
+        <!-- المندوبين -->
+        <div class="delegates-section">
+            <h3>المندوبين</h3>
+            <div id="delegates-list" class="delegates-grid"></div>
+        </div>
+
+        <!-- فلترة وبحث -->
         <div class="filters-container">
             <input type="text" id="search-input" placeholder="بحث بالاسم أو رقم الهاتف">
+            <select id="delegate-filter">
+                <option value="all">كل المندوبين</option>
+            </select>
             <select id="date-filter">
                 <option value="all">كل التواريخ</option>
                 <option value="today">اليوم</option>
@@ -117,18 +239,47 @@
                 <option value="month">هذا الشهر</option>
             </select>
         </div>
+
+        <!-- قائمة العملاء -->
         <div id="clients-list" class="clients-grid"></div>
     </main>
 
     <script src="config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const status = urlParams.get('status');
-            const statusTitle = document.getElementById('status-title');
             const clientsList = document.getElementById('clients-list');
             const searchInput = document.getElementById('search-input');
             const dateFilter = document.getElementById('date-filter');
+            const delegateFilter = document.getElementById('delegate-filter');
+
+            // تحديث عداد الحالات
+            function updateStatusCounts(clients) {
+                const counts = {
+                    total: clients.length,
+                    'مكالمة منتظرة': 0,
+                    'مهتم متابعة': 0,
+                    'غير مهتم': 0,
+                    'محتمل بيفكر': 0,
+                    'مقابلة في المقر': 0,
+                    'تبرع مؤكد': 0,
+                    'رقم خطأ': 0
+                };
+
+                clients.forEach(client => {
+                    if (counts.hasOwnProperty(client.status)) {
+                        counts[client.status]++;
+                    }
+                });
+
+                document.getElementById('total-clients').textContent = counts.total;
+                document.getElementById('waiting-call-count').textContent = counts['مكالمة منتظرة'];
+                document.getElementById('interested-count').textContent = counts['مهتم متابعة'];
+                document.getElementById('not-interested-count').textContent = counts['غير مهتم'];
+                document.getElementById('thinking-count').textContent = counts['محتمل بيفكر'];
+                document.getElementById('meeting-count').textContent = counts['مقابلة في المقر'];
+                document.getElementById('confirmed-count').textContent = counts['تبرع مؤكد'];
+                document.getElementById('wrong-number-count').textContent = counts['رقم خطأ'];
+            }
 
             // تحديث عنوان الصفحة
             if (statusTitle && status) {
@@ -137,8 +288,40 @@
             }
 
             try {
-                console.log('Fetching from:', window.API_BASE);
-                const res = await fetch(`${window.API_BASE}/clients?status=${encodeURIComponent(status)}`, {
+                // جلب المندوبين
+                const delegatesRes = await fetch(`${window.API_BASE}/delegates`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
+                });
+
+                if (!delegatesRes.ok) throw new Error('فشل في تحميل بيانات المندوبين');
+                const delegates = await delegatesRes.json();
+
+                // تحديث قائمة المندوبين
+                const delegatesList = document.getElementById('delegates-list');
+                if (delegatesList) {
+                    delegatesList.innerHTML = delegates.map(delegate => `
+                        <div class="delegate-card">
+                            <div class="delegate-name">${delegate.name}</div>
+                            <div class="delegate-stats">
+                                عدد العملاء: ${delegate.clientsCount || 0}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // تحديث فلتر المندوبين
+                    delegateFilter.innerHTML = `
+                        <option value="all">كل المندوبين</option>
+                        ${delegates.map(d => `<option value="${d._id}">${d.name}</option>`).join('')}
+                    `;
+                }
+
+                // جلب العملاء
+                const res = await fetch(`${window.API_BASE}/clients`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
