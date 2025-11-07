@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة المندوب - Abdaa Entalek</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>مرحبا بك، مندوب</h2>
+
+    <div class="status-buttons">
+      <button onclick="showMyClients('مهتم')">مهتم</button>
+      <button onclick="showMyClients('غير مهتم')">غير مهتم</button>
+      <button onclick="showMyClients('حجز مؤكد')">حجز مؤكد</button>
+      <button onclick="showMyClients('مكالمة لاحقة')">مكالمة لاحقة</button>
+    </div>
+
+    <div id="clients-list">
+      <!-- هنا هيظهر العملاء حسب الحالة -->
+    </div>
+  </div>
+
+  <script src="user-dashboard.js"></script>
+</body>
+</html>

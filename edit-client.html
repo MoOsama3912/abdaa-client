@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تعديل بيانات العميل - Abdaa Entalek</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <h2>تعديل بيانات العميل</h2>
+    <input type="text" id="name" placeholder="اسم العميل" />
+    <input type="text" id="phone" placeholder="رقم الهاتف" />
+    <select id="status">
+      <option value="مهتم">مهتم</option>
+      <option value="غير مهتم">غير مهتم</option>
+      <option value="حجز مؤكد">حجز مؤكد</option>
+      <option value="مكالمة لاحقة">مكالمة لاحقة</option>
+    </select>
+    <textarea id="notes" placeholder="ملاحظات"></textarea>
+    <button onclick="updateClient()">حفظ التعديلات</button>
+    <p id="update-msg"></p>
+  </div>
+
+  <script src="edit-client.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم - Abdaa Entalek</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>لوحة التحكم</h2>
+
+    <div class="status-buttons">
+      <button onclick="showClients('مهتم')">مهتم</button>
+      <button onclick="showClients('غير مهتم')">غير مهتم</button>
+      <button onclick="showClients('حجز مؤكد')">حجز مؤكد</button>
+      <button onclick="showClients('مكالمة لاحقة')">مكالمة لاحقة</button>
+    </div>
+
+    <div id="clients-list">
+      <!-- هنا هيظهر العملاء حسب الحالة -->
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</body>
+
+<nav>
+  <a href="add-client.html">➕ إضافة عميل</a>
+  <a href="statistics.html">📊 الإحصائيات</a>
+  <a href="add-user.html">👤 إضافة مستخدم</a>
+  <a href="index.html">🔒 تسجيل الخروج</a>
+</nav>
+
+</body>
+<button class="add-client" onclick="location.href='add-client.html'">➕ إضافة عميل</button>
+<button class="add-user" onclick="location.href='add-user.html'">👤 إضافة مستخدم</button>
+<button class="stats" onclick="location.href='statistics.html'">📊 الإحصائيات</button>
+<button class="upload">📤 رفع Excel</button>
+<button class="download">📥 تنزيل Excel</button>
+<button class="print" onclick="window.print()">🖨️ طباعة</button>
+<button class="refresh" onclick="location.reload()">🔄 تحديث</button>
+
+
+</html>
+
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم - ابدأ انطلق</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header>
+    <h1>لوحة التحكم</h1>
+    <div class="filters">
+      <select id="delegate-filter" onchange="filterByDelegate()">
+        <option value="all">كل المندوبين</option>
+        <!-- يتم إضافة المندوبين ديناميكيًا -->
+      </select>
+    </div>
+  </header>
+
+  <section class="status-summary">
+    <div class="status-box" id="waiting-call">📞 مكالمة منتظرة: <span>0</span></div>
+    <div class="status-box" id="follow-up">🔁 مهتم متابعة: <span>0</span></div>
+    <div class="status-box" id="not-interested">❌ غير مهتم: <span>0</span></div>
+    <div class="status-box" id="thinking">🤔 محتمل بيفكر: <span>0</span></div>
+    <div class="status-box" id="meeting">🏢 مقابلة في المقر: <span>0</span></div>
+    <div class="status-box" id="donated">💰 تبرع مؤكد: <span>0</span></div>
+    <div class="status-box" id="wrong-number">⚠️ رقم خطأ: <span>0</span></div>
+    <div class="status-box" id="total">📊 إجمالي الأرقام: <span>0</span></div>
+  </section>
+
+  <main>
+    <div id="clients-container"></div>
+  </main>
+
+  <footer>
+    <button onclick="location.href='add-client.html'">➕ إضافة عميل</button>
+  </footer>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
