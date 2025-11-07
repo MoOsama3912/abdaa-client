@@ -1,48 +1,86 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - Abdaa Entalek</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة التحكم - Abdaa Entalek</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="new-styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <header style="padding:16px; text-align:center; background:#fff;">
-    <h1>لوحة التحكم</h1>
-    <div class="filters" style="margin-top:8px;">
-      <select id="delegate-filter" onchange="filterByDelegate()">
-        <option value="all">كل المندوبين</option>
-      </select>
+    <header class="page-header">
+        <div class="logo-container">
+            <img src="images/logo.png" alt="Abdaa Entalek Logo">
+        </div>
+        <div class="search-box">
+            <input type="text" id="quick-search" placeholder="بحث سريع عن عميل..." />
+            <span class="search-icon">🔍</span>
+        </div>
+    </header>
+
+    <div class="status-cards">
+        <div class="status-card interested" data-status="مهتم" onclick="window.location.href='clients-by-status.html?status=مهتم'">
+            <div class="icon">
+                <i class="fas fa-thumbs-up"></i>
+            </div>
+            <div class="details">
+                <h3>العملاء المهتمين</h3>
+                <div class="count" id="interested-count">0</div>
+            </div>
+        </div>
+
+        <div class="status-card not-interested" data-status="غير مهتم" onclick="window.location.href='clients-by-status.html?status=غير مهتم'">
+            <div class="icon">
+                <i class="fas fa-thumbs-down"></i>
+            </div>
+            <div class="details">
+                <h3>غير المهتمين</h3>
+                <div class="count" id="not-interested-count">0</div>
+            </div>
+        </div>
+
+        <div class="status-card confirmed" data-status="حجز مؤكد" onclick="window.location.href='clients-by-status.html?status=حجز مؤكد'">
+            <div class="icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="details">
+                <h3>الحجوزات المؤكدة</h3>
+                <div class="count" id="confirmed-count">0</div>
+            </div>
+        </div>
+
+        <div class="status-card callback" data-status="مكالمة لاحقة" onclick="window.location.href='clients-by-status.html?status=مكالمة لاحقة'">
+            <div class="icon">
+                <i class="fas fa-phone"></i>
+            </div>
+            <div class="details">
+                <h3>مكالمات لاحقة</h3>
+                <div class="count" id="callback-count">0</div>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <section class="status-summary" style="padding:20px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center;">
-    <div class="status-box" id="waiting-call">📞 مكالمة منتظرة: <span>0</span></div>
-    <div class="status-box" id="follow-up">🔁 مهتم متابعة: <span>0</span></div>
-    <div class="status-box" id="not-interested">❌ غير مهتم: <span>0</span></div>
-    <div class="status-box" id="thinking">🤔 محتمل بيفكر: <span>0</span></div>
-    <div class="status-box" id="meeting">🏢 مقابلة في المقر: <span>0</span></div>
-    <div class="status-box" id="donated">💰 تبرع مؤكد: <span>0</span></div>
-    <div class="status-box" id="wrong-number">⚠️ رقم خطأ: <span>0</span></div>
-    <div class="status-box" id="total">📊 إجمالي الأرقام: <span>0</span></div>
-  </section>
+    <div class="quick-actions">
+        <a href="add-client.html" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>
+            إضافة عميل جديد
+        </a>
+        <a href="statistics.html" class="btn btn-primary">
+            <i class="fas fa-chart-bar"></i>
+            الإحصائيات
+        </a>
+        <a href="advanced-analytics.html" class="btn btn-primary">
+            <i class="fas fa-chart-line"></i>
+            التحليلات المتقدمة
+        </a>
+        <a href="delegates.html" class="btn btn-primary">
+            <i class="fas fa-users"></i>
+            المندوبين
+        </a>
+    </div>
 
-  <main style="padding:20px;">
-    <div id="clients-container"></div>
-  </main>
-
-  <footer style="text-align:center; padding:16px;">
-    <button onclick="location.href='add-client.html'">➕ إضافة عميل</button>
-    <button onclick="location.href='add-user.html'">👤 إضافة مستخدم</button>
-    <button onclick="location.href='statistics.html'">📊 الإحصائيات</button>
-  </footer>
-
-  <script src="config.js"></script>
-  <script src="dashboard.js"></script>
-
-  <div style="text-align:center; margin-top:12px;">
-    <img src="images/logo.png" alt="Abdaa Entalek Logo" style="height:60px;">
-  </div>
-
+    <script src="config.js"></script>
+    <script src="dashboard.js"></script>
 </body>
 </html>
