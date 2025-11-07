@@ -232,3 +232,77 @@ button, a {
 button:hover, a:hover {
   background-color: #0056b3;
 }
+
+
+/* تنسيق بطاقات الحالات في الداشبورد */
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.status-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.status-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.status-card .icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: white;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+.status-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.status-card .count {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #222;
+}
+
+.status-card select {
+  padding: 6px;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+/* ألوان أيقونات الحالات */
+.waiting-call .icon { background: #007bff; }
+.interested .icon { background: #28a745; }
+.not-interested .icon { background: #dc3545; }
+.thinking .icon { background: #ffc107; }
+.meeting .icon { background: #6f42c1; }
+.confirmed .icon { background: #20c997; }
+.wrong-number .icon { background: #6c757d; }
+.total .icon { background: #343a40; }
+/* تحسينات الخلفية */
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
