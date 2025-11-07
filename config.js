@@ -1,6 +1,18 @@
-// Client-side configuration
-// Change API_BASE if your server runs elsewhere (e.g., production)
-const API_BASE = 'https://abdaa-server.vercel.app';
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
-// Export for modules that can import, and attach to window for inline scripts
-if (typeof window !== 'undefined') window.API_BASE = API_BASE;
+// إعدادات CORS
+const corsOptions = {
+    origin: ['https://abdaa-client.vercel.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
+    credentials: true,
+    maxAge: 86400 // 24 ساعة
+};
+
+// تفعيل CORS
+app.use(cors(corsOptions));
+
+// باقي إعدادات السيرفر
+app.use(express.json());

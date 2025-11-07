@@ -58,8 +58,10 @@ document.addEventListener('DOMContentLoaded', function() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Accept": "application/json"
+          "Accept": "application/json",
+          "Origin": "https://abdaa-client.vercel.app"
         },
+        mode: 'cors',
         body: JSON.stringify(client)
       });
 
