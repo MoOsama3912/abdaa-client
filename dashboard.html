@@ -96,47 +96,7 @@
         </div>
     </header>
 
-    <div class="status-cards">
-        <div class="status-card interested" data-status="مهتم" onclick="window.location.href='clients-by-status.html?status=مهتم'">
-            <div class="icon">
-                <i class="fas fa-thumbs-up"></i>
-            </div>
-            <div class="details">
-                <h3>العملاء المهتمين</h3>
-                <div class="count" id="interested-count">0</div>
-            </div>
-        </div>
-
-        <div class="status-card not-interested" data-status="غير مهتم" onclick="window.location.href='clients-by-status.html?status=غير مهتم'">
-            <div class="icon">
-                <i class="fas fa-thumbs-down"></i>
-            </div>
-            <div class="details">
-                <h3>غير المهتمين</h3>
-                <div class="count" id="not-interested-count">0</div>
-            </div>
-        </div>
-
-        <div class="status-card confirmed" data-status="حجز مؤكد" onclick="window.location.href='clients-by-status.html?status=حجز مؤكد'">
-            <div class="icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="details">
-                <h3>الحجوزات المؤكدة</h3>
-                <div class="count" id="confirmed-count">0</div>
-            </div>
-        </div>
-
-        <div class="status-card callback" data-status="مكالمة لاحقة" onclick="window.location.href='clients-by-status.html?status=مكالمة لاحقة'">
-            <div class="icon">
-                <i class="fas fa-phone"></i>
-            </div>
-            <div class="details">
-                <h3>مكالمات لاحقة</h3>
-                <div class="count" id="callback-count">0</div>
-            </div>
-        </div>
-    </div>
+    <div class="status-cards" id="status-cards"></div>
 
     <div class="quick-actions">
         <a href="add-client.html" class="btn btn-primary">
@@ -155,9 +115,16 @@
             <i class="fas fa-users"></i>
             المندوبين
         </a>
+        <button id="refresh-btn" class="btn btn-secondary" title="تحديث الإحصائيات">
+            <i class="fas fa-sync-alt"></i> تحديث
+        </button>
+        <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px;">
+            <input type="checkbox" id="auto-refresh-toggle"> تحديث تلقائي
+        </label>
     </div>
 
     <script src="config.js"></script>
+    <script src="statuses.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>

@@ -29,6 +29,22 @@
   </main>
 
   <script src="config.js"></script>
+  <script src="statuses.js"></script>
+  <script>
+    // populate status select dynamically
+    (function(){
+      const sel = document.getElementById('status');
+      if (!sel) return;
+      sel.innerHTML = '';
+      const list = window.STATUSES || [];
+      list.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.key;
+        opt.textContent = s.label;
+        sel.appendChild(opt);
+      });
+    })();
+  </script>
   <script src="edit-client.js"></script>
 
   <footer style="text-align:center; margin-top:12px;">

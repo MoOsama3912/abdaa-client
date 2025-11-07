@@ -6,6 +6,7 @@ async function fetchClients() {
     const res = await fetch(`${window.API_BASE || 'http://localhost:5000'}/clients`);
     if (!res.ok) throw new Error('Failed to fetch clients');
     allClients = await res.json();
+    renderStatusCards();
     updateStats();
     renderClients(allClients);
     populateDelegates();
@@ -16,39 +17,8 @@ async function fetchClients() {
 
   document.addEventListener('DOMContentLoaded', async function() {
     try {
-      // جلب بيانات العملاء
-      const response = await fetch(`${window.API_BASE}/clients`);
-      if (!response.ok) throw new Error('فشل في جلب البيانات');
-      const clients = await response.json();
-
-      // تحديث العدادات
-      const counts = {
-        total: clients.length,
-        'مكالمة منتظرة': 0,
-        'مهتم متابعة': 0,
-        'غير مهتم': 0,
-        'محتمل بيفكر': 0,
-        'مقابلة في المقر': 0,
-        'تبرع مؤكد': 0,
-        'رقم خطأ': 0
-      };
-
-      // حساب عدد العملاء في كل حالة
-      clients.forEach(client => {
-        if (counts.hasOwnProperty(client.status)) {
-          counts[client.status]++;
-        }
-      });
-
-      // تحديث العرض
-      document.getElementById('total-count').textContent = counts.total;
-      document.getElementById('waiting-call-count').textContent = counts['مكالمة منتظرة'];
-      document.getElementById('interested-count').textContent = counts['مهتم متابعة'];
-      document.getElementById('not-interested-count').textContent = counts['غير مهتم'];
-      document.getElementById('thinking-count').textContent = counts['محتمل بيفكر'];
-      document.getElementById('meeting-count').textContent = counts['مقابلة في المقر'];
-      document.getElementById('confirmed-count').textContent = counts['تبرع مؤكد'];
-      document.getElementById('wrong-number-count').textContent = counts['رقم خطأ'];
+      // initial fetch to populate everything via fetchClients
+      await fetchClients();
 
       // تحديث البحث السريع
       const quickSearch = document.getElementById('quick-search');
@@ -76,24 +46,55 @@ async function fetchClients() {
       alert('حدث خطأ في تحميل البيانات. يرجى تحديث الصفحة.');
     }
   });
+
+// render status cards into #status-cards using window.STATUSES
+function renderStatusCards() {
+  const container = document.getElementById('status-cards');
+  if (!container) return;
+  const list = window.STATUSES || [];
+  container.innerHTML = '';
+
+  // total card
+  const totalCard = document.createElement('div');
+  totalCard.className = 'status-card total';
+  totalCard.innerHTML = `
+    <div class="icon"><i class="fas fa-users"></i></div>
+    <div class="details"><h3>إجمالي العملاء</h3><div class="count" data-status="__total">0</div></div>`;
+  totalCard.addEventListener('click', () => window.location.href = 'clients-by-status.html');
+  container.appendChild(totalCard);
+
+  list.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'status-card';
+    // add a normalized class name based on key
+    const cls = s.key.replace(/\s+/g, '-');
+    card.classList.add(cls);
+    card.setAttribute('data-status', s.key);
+    card.innerHTML = `
+      <div class="icon" style="background:${s.color}"><i class="fas ${s.icon}"></i></div>
+      <div class="details"><h3>${s.label}</h3><div class="count" data-status="${s.key}">0</div></div>
+    `;
+    card.addEventListener('click', () => window.location.href = `clients-by-status.html?status=${encodeURIComponent(s.key)}`);
+    container.appendChild(card);
+  });
+}
+
+// updateStats will populate counts inside rendered status cards
 function updateStats() {
   const counts = {};
   allClients.forEach(c => { counts[c.status] = (counts[c.status] || 0) + 1; });
 
-  // update known boxes if they exist
-  const setSpan = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.querySelector('span').textContent = value;
-  };
+  // set total
+  const totalEl = document.querySelector('.count[data-status="__total"]');
+  if (totalEl) totalEl.textContent = allClients.length || 0;
 
-  setSpan('waiting-call', counts['مكالمة منتظرة'] || 0);
-  setSpan('follow-up', counts['مهتم متابعة'] || 0);
-  setSpan('not-interested', counts['غير مهتم'] || 0);
-  setSpan('thinking', counts['محتمل بيفكر'] || 0);
-  setSpan('meeting', counts['مقابلة في المقر'] || 0);
-  setSpan('donated', counts['تبرع مؤكد'] || 0);
-  setSpan('wrong-number', counts['رقم خطأ'] || 0);
-  setSpan('total', allClients.length || 0);
+  // update each status card by data-status
+  const cards = document.querySelectorAll('.count[data-status]');
+  cards.forEach(el => {
+    const key = el.getAttribute('data-status');
+    if (key === '__total') return;
+    el.textContent = counts[key] || 0;
+  });
 }
 
 function renderClients(clients) {
@@ -163,3 +164,27 @@ async function deleteClient(id) {
 }
 
 window.addEventListener('load', fetchClients);
+
+// Auto-refresh support
+let autoRefreshInterval = null;
+function startAutoRefresh(intervalMs = 30000) {
+  stopAutoRefresh();
+  autoRefreshInterval = setInterval(() => {
+    if (document.visibilityState === 'visible') fetchClients();
+  }, intervalMs);
+}
+
+function stopAutoRefresh() {
+  if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const refreshBtn = document.getElementById('refresh-btn');
+  const autoToggle = document.getElementById('auto-refresh-toggle');
+  if (refreshBtn) refreshBtn.addEventListener('click', () => fetchClients());
+  if (autoToggle) {
+    autoToggle.addEventListener('change', (e) => {
+      if (e.target.checked) startAutoRefresh(30000); else stopAutoRefresh();
+    });
+  }
+});
