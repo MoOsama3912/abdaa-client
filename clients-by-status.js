@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // دالة جلب العملاء من السيرفر
     async function fetchClients() {
         try {
-            const response = await fetch(`${apiUrl}/clients?status=${status}`);
+            const response = await fetch(`${window.API_BASE}/clients?status=${status}`);
             if (!response.ok) throw new Error('فشل في جلب البيانات');
             return await response.json();
         } catch (error) {

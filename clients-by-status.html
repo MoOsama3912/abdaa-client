@@ -1,51 +1,141 @@
-<<<<<<< HEAD
-<h2>العملاء حسب الحالة</h2>
-<div id="clients-list"></div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العملاء حسب الحالة - Abdaa Entalek</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="new-styles.css">
+    <script src="config.js"></script>
+</head>
+<body>
+    <header class="page-header">
+        <div class="logo-container">
+            <img src="images/logo.png" alt="Abdaa Entalek Logo">
+        </div>
+        <a href="dashboard.html" class="back-button">🔙 رجوع للقائمة الرئيسية</a>
+    </header>
 
-<script src="config.js"></script>
-<script>
-  (async function(){
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    try {
-      const res = await fetch(`${window.API_BASE || 'http://localhost:5000'}/clients?status=${encodeURIComponent(status)}`);
-      if (!res.ok) throw new Error('Failed to load');
-      const data = await res.json();
-      const container = document.getElementById('clients-list');
-      if (!container) return;
-      data.forEach(client => {
-        const div = document.createElement('div');
-        div.textContent = `${client.name} - ${client.phone}`;
-        container.appendChild(div);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  })();
-</script>
-=======
-<h2>العملاء حسب الحالة</h2>
-<div id="clients-list"></div>
+    <main class="content-container">
+        <h2 id="status-title">العملاء حسب الحالة</h2>
+        <div class="filters-container">
+            <input type="text" id="search-input" placeholder="بحث بالاسم أو رقم الهاتف">
+            <select id="date-filter">
+                <option value="all">كل التواريخ</option>
+                <option value="today">اليوم</option>
+                <option value="week">هذا الأسبوع</option>
+                <option value="month">هذا الشهر</option>
+            </select>
+        </div>
+        <div id="clients-list" class="clients-grid"></div>
+    </main>
 
-<script src="config.js"></script>
-<script>
-  (async function(){
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    try {
-      const res = await fetch(`${window.API_BASE || 'http://localhost:5000'}/clients?status=${encodeURIComponent(status)}`);
-      if (!res.ok) throw new Error('Failed to load');
-      const data = await res.json();
-      const container = document.getElementById('clients-list');
-      if (!container) return;
-      data.forEach(client => {
-        const div = document.createElement('div');
-        div.textContent = `${client.name} - ${client.phone}`;
-        container.appendChild(div);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  })();
-</script>
->>>>>>> 189f858cbf62210a0e6f1c907599bdec2fb7fed2
+    <script src="config.js"></script>
+    <script></script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const statusTitle = document.getElementById('status-title');
+            const clientsList = document.getElementById('clients-list');
+            const searchInput = document.getElementById('search-input');
+            const dateFilter = document.getElementById('date-filter');
+
+            // تحديث عنوان الصفحة
+            if (statusTitle && status) {
+                statusTitle.textContent = `العملاء - ${status}`;
+                document.title = `العملاء - ${status} - Abdaa Entalek`;
+            }
+
+            try {
+                const res = await fetch(`${window.API_BASE}/clients?status=${encodeURIComponent(status)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!res.ok) throw new Error('فشل في تحميل البيانات');
+                const data = await res.json();
+
+                if (!clientsList) return;
+
+                // عرض العملاء
+                function displayClients(clients) {
+                    if (clients.length === 0) {
+                        clientsList.innerHTML = '<p class="no-results">لا يوجد عملاء في هذه الحالة</p>';
+                        return;
+                    }
+
+                    clientsList.innerHTML = clients.map(client => `
+                        <div class="client-card">
+                            <div class="client-info">
+                                <h3>${client.name}</h3>
+                                <p class="phone">📱 ${client.phone}</p>
+                                <p class="date">📅 ${new Date(client.createdAt).toLocaleDateString('ar-EG')}</p>
+                                ${client.notes ? `<p class="notes">📝 ${client.notes}</p>` : ''}
+                            </div>
+                            <div class="client-actions">
+                                <button onclick="editClient('${client._id}')" class="edit-btn">تعديل</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // تطبيق البحث
+                function filterClients() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const dateValue = dateFilter.value;
+                    
+                    let filtered = data.filter(client => 
+                        client.name.toLowerCase().includes(searchTerm) ||
+                        client.phone.includes(searchTerm)
+                    );
+
+                    // تصفية حسب التاريخ
+                    if (dateValue !== 'all') {
+                        const now = new Date();
+                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        filtered = filtered.filter(client => {
+                            const createdAt = new Date(client.createdAt);
+                            switch(dateValue) {
+                                case 'today':
+                                    return createdAt >= today;
+                                case 'week':
+                                    const weekAgo = new Date(today);
+                                    weekAgo.setDate(weekAgo.getDate() - 7);
+                                    return createdAt >= weekAgo;
+                                case 'month':
+                                    const monthAgo = new Date(today);
+                                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                                    return createdAt >= monthAgo;
+                                default:
+                                    return true;
+                            }
+                        });
+                    }
+
+                    displayClients(filtered);
+                }
+
+                // إضافة مستمعي الأحداث
+                searchInput.addEventListener('input', filterClients);
+                dateFilter.addEventListener('change', filterClients);
+
+                // عرض البيانات الأولية
+                displayClients(data);
+
+            } catch (err) {
+                console.error('خطأ:', err);
+                if (clientsList) {
+                    clientsList.innerHTML = '<p class="error-message">حدث خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.</p>';
+                }
+            }
+        });
+
+        // دالة التعديل
+        function editClient(id) {
+            window.location.href = `edit-client.html?id=${id}`;
+        }
+    </script>
+</body>
+</html>
