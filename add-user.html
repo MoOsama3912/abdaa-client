@@ -99,15 +99,22 @@
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإضافة...';
 
-                const response = await fetch(`${apiUrl}/users/add`, {
+                if (!window.API_BASE) throw new Error('خطأ في التكوين: API_BASE غير معرف');
+                if (!navigator.onLine) throw new Error('لا يوجد اتصال بالإنترنت');
+
+                const response = await fetch(`${window.API_BASE}/users`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify(formData)
                 });
 
                 const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || data.error || 'حدث خطأ في إضافة المستخدم');
 
                 if (response.ok) {
                     messageDiv.className = 'alert alert-success';
