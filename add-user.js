@@ -17,3 +17,12 @@ function addUser() {
     msg.style.color = "red";
   }
 }
+
+// If there's a form, attach submit handler
+const addUserForm = document.getElementById('add-user-form');
+if (addUserForm) {
+  addUserForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    addUser();
+  });
+}

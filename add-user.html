@@ -9,16 +9,24 @@
 <body>
   <div class="form-container">
     <h2>إضافة مستخدم جديد</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم" />
-    <input type="password" id="password" placeholder="كلمة المرور" />
-    <select id="role">
-      <option value="user">مندوب</option>
-      <option value="admin">مدير</option>
-    </select>
-    <button onclick="addUser()">إضافة</button>
-    <p id="user-msg"></p>
+    <form id="add-user-form">
+      <input type="text" id="username" placeholder="اسم المستخدم" required />
+      <input type="password" id="password" placeholder="كلمة المرور" required />
+      <select id="role">
+        <option value="user">مندوب</option>
+        <option value="admin">مدير</option>
+      </select>
+      <button type="submit">إضافة</button>
+      <p id="user-msg"></p>
+    </form>
   </div>
 
   <script src="add-user.js"></script>
+
+  <footer style="text-align:center; margin-top:12px;">
+    <img src="images/logo.png" alt="Abdaa Entalek Logo" style="height:60px;">
+    <div style="margin-top:8px;"><a href="dashboard.html" style="padding:10px 20px; background-color:#007bff; color:white; text-decoration:none; border-radius:5px;">🔙 رجوع للقائمة الرئيسية</a></div>
+  </footer>
+
 </body>
 </html>
