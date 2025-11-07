@@ -66,9 +66,9 @@ function renderStatusCards() {
   list.forEach(s => {
     const card = document.createElement('div');
     card.className = 'status-card';
-    // add a normalized class name based on key
-    const cls = s.key.replace(/\s+/g, '-');
-    card.classList.add(cls);
+    // add a stable english slug class (used by CSS) when available
+    const slug = s.slug || (s.key || '').replace(/\s+/g, '-').toLowerCase();
+    if (slug) card.classList.add(slug);
     card.setAttribute('data-status', s.key);
     card.innerHTML = `
       <div class="icon" style="background:${s.color}"><i class="fas ${s.icon}"></i></div>
