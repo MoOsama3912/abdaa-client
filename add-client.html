@@ -6,6 +6,7 @@
     <title>إضافة عميل جديد - Abdaa Entalek</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="new-styles.css" />
+    <link rel="stylesheet" href="enhanced-styles.css" />
     <script src="config.js"></script>
 </head>
 <body>
@@ -22,10 +23,13 @@
             <input type="text" id="name" placeholder="اسم العميل" required />
             <input type="text" id="phone" placeholder="رقم الهاتف" required />
             <select id="status">
-                <option value="مهتم">مهتم</option>
+                <option value="مكالمة منتظرة">مكالمة منتظرة</option>
+                <option value="مهتم متابعة">مهتم متابعة</option>
                 <option value="غير مهتم">غير مهتم</option>
-                <option value="حجز مؤكد">حجز مؤكد</option>
-                <option value="مكالمة لاحقة">مكالمة لاحقة</option>
+                <option value="محتمل بيفكر">محتمل بيفكر</option>
+                <option value="مقابلة في المقر">مقابلة في المقر</option>
+                <option value="تبرع مؤكد">تبرع مؤكد</option>
+                <option value="رقم خطأ">رقم خطأ</option>
             </select>
             <textarea id="notes" placeholder="ملاحظات"></textarea>
             <button type="submit">إضافة</button>

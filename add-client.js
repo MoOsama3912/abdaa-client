@@ -1,7 +1,29 @@
-// Defensive: only attach if form exists
+// التأكد من تحميل API_BASE
+if (!window.API_BASE) {
+    console.error('خطأ: لم يتم تحميل عنوان API بشكل صحيح');
+}
+
+// التأكد من وجود النموذج
 const addClientForm = document.getElementById("add-client-form");
 if (addClientForm) {
-  addClientForm.addEventListener("submit", async function (e) {
+    // إضافة مستمع للتحقق من الاتصال
+    window.addEventListener('online', function() {
+        const msg = document.getElementById("success-msg");
+        if (msg) {
+            msg.textContent = "تم استعادة الاتصال بالإنترنت";
+            msg.style.color = 'green';
+        }
+    });
+
+    window.addEventListener('offline', function() {
+        const msg = document.getElementById("success-msg");
+        if (msg) {
+            msg.textContent = "لا يوجد اتصال بالإنترنت";
+            msg.style.color = 'red';
+        }
+    });
+
+    addClientForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const client = {
