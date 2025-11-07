@@ -1,130 +1,161 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>لوحة التحكم - Abdaa Entalek</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="new-styles.css" />
-    <link rel="stylesheet" href="enhanced-styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <style>
-            .status-cards {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 20px;
-                padding: 20px;
-            }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم - Abdaa Entalek</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="new-styles.css" />
+  <link rel="stylesheet" href="enhanced-styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .status-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
 
-            .status-card {
-                background: white;
-                border-radius: 12px;
-                padding: 20px;
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
+    .status-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-            .status-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            }
+    .status-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
 
-            .status-card .icon {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-left: 15px;
-                font-size: 1.5rem;
-                color: white;
-            }
+    .status-card .icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: white;
+      padding: 15px;
+      border-radius: 50%;
+    }
 
-            .status-card .details {
-                flex: 1;
-            }
+    .status-card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--gray-700);
+    }
 
-            .status-card h3 {
-                margin: 0;
-                font-size: 1.1rem;
-                color: var(--gray-700);
-            }
+    .status-card .count {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 10px 0;
+    }
 
-            .status-card .count {
-                font-size: 1.8rem;
-                font-weight: bold;
-                margin-top: 5px;
-            }
+    .status-card select {
+      padding: 5px;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
 
-            /* تنسيق الألوان لكل حالة */
-            .status-card.total .icon { background: var(--primary-color); }
-            .status-card.waiting-call .icon { background: #3B82F6; }
-            .status-card.interested .icon { background: #10B981; }
-            .status-card.not-interested .icon { background: #EF4444; }
-            .status-card.thinking .icon { background: #F59E0B; }
-            .status-card.meeting .icon { background: #8B5CF6; }
-            .status-card.confirmed .icon { background: #059669; }
-            .status-card.wrong-number .icon { background: #6B7280; }
-
-            /* تنسيق العدادات */
-            .status-card.total .count { color: var(--primary-color); }
-            .status-card.waiting-call .count { color: #3B82F6; }
-            .status-card.interested .count { color: #10B981; }
-            .status-card.not-interested .count { color: #EF4444; }
-            .status-card.thinking .count { color: #F59E0B; }
-            .status-card.meeting .count { color: #8B5CF6; }
-            .status-card.confirmed .count { color: #059669; }
-            .status-card.wrong-number .count { color: #6B7280; }
-        </style>
+    .waiting-call .icon { background: #3B82F6; }
+    .interested .icon { background: #10B981; }
+    .not-interested .icon { background: #EF4444; }
+    .thinking .icon { background: #F59E0B; }
+    .meeting .icon { background: #8B5CF6; }
+    .confirmed .icon { background: #059669; }
+    .wrong-number .icon { background: #6B7280; }
+    .total .icon { background: var(--primary-color); }
+  </style>
 </head>
 <body>
-    <div class="gradient-bg"></div>
-    
-    <header class="page-header">
-        <div class="logo-container logo-effect">
-            <img src="images/logo.png" alt="Abdaa Entalek Logo">
-        </div>
-        <div class="search-box enhanced-form">
-            <input type="text" id="quick-search" placeholder="بحث سريع عن عميل..." class="form-control" />
-            <span class="search-icon">
-                <i class="fas fa-search"></i>
-            </span>
-        </div>
-    </header>
+  <div class="gradient-bg"></div>
 
-    <div class="status-cards" id="status-cards"></div>
+  <header class="page-header">
+    <div class="logo-container logo-effect">
+      <img src="images/logo.png" alt="Abdaa Entalek Logo">
+    </div>
+    <div class="search-box enhanced-form">
+      <input type="text" id="quick-search" placeholder="بحث سريع عن عميل..." class="form-control" />
+      <span class="search-icon">
+        <i class="fas fa-search"></i>
+      </span>
+    </div>
+  </header>
 
-    <div class="quick-actions">
-        <a href="add-client.html" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i>
-            إضافة عميل جديد
-        </a>
-        <a href="statistics.html" class="btn btn-primary">
-            <i class="fas fa-chart-bar"></i>
-            الإحصائيات
-        </a>
-        <a href="advanced-analytics.html" class="btn btn-primary">
-            <i class="fas fa-chart-line"></i>
-            التحليلات المتقدمة
-        </a>
-        <a href="delegates.html" class="btn btn-primary">
-            <i class="fas fa-users"></i>
-            المندوبين
-        </a>
-        <button id="refresh-btn" class="btn btn-secondary" title="تحديث الإحصائيات">
-            <i class="fas fa-sync-alt"></i> تحديث
-        </button>
-        <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px;">
-            <input type="checkbox" id="auto-refresh-toggle"> تحديث تلقائي
-        </label>
+  <div class="quick-actions">
+    <a href="add-client.html" class="btn btn-primary"><i class="fas fa-user-plus"></i> إضافة عميل جديد</a>
+    <a href="statistics.html" class="btn btn-primary"><i class="fas fa-chart-bar"></i> الإحصائيات</a>
+    <a href="advanced-analytics.html" class="btn btn-primary"><i class="fas fa-chart-line"></i> التحليلات المتقدمة</a>
+    <a href="delegates.html" class="btn btn-primary"><i class="fas fa-users"></i> المندوبين</a>
+    <button id="refresh-btn" class="btn btn-secondary" title="تحديث الإحصائيات"><i class="fas fa-sync-alt"></i> تحديث</button>
+    <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px;">
+      <input type="checkbox" id="auto-refresh-toggle"> تحديث تلقائي
+    </label>
+  </div>
+
+  <div class="status-cards">
+    <div class="status-card waiting-call">
+      <div class="icon"><i class="fas fa-phone-volume"></i></div>
+      <h3>مكالمة منتظرة</h3>
+      <div class="count">12</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
     </div>
 
-    <script src="config.js"></script>
-    <script src="statuses.js"></script>
-    <script src="dashboard.js"></script>
+    <div class="status-card interested">
+      <div class="icon"><i class="fas fa-user-check"></i></div>
+      <h3>مهتم متابعة</h3>
+      <div class="count">8</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+
+    <div class="status-card not-interested">
+      <div class="icon"><i class="fas fa-user-times"></i></div>
+      <h3>غير مهتم</h3>
+      <div class="count">5</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+
+    <div class="status-card thinking">
+      <div class="icon"><i class="fas fa-user-clock"></i></div>
+      <h3>محتمل بيفكر</h3>
+      <div class="count">7</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+
+    <div class="status-card meeting">
+      <div class="icon"><i class="fas fa-building"></i></div>
+      <h3>مقابلة في المقر</h3>
+      <div class="count">3</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+
+    <div class="status-card confirmed">
+      <div class="icon"><i class="fas fa-hand-holding-usd"></i></div>
+      <h3>تبرع مؤكد</h3>
+      <div class="count">10</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+
+    <div class="status-card wrong-number">
+      <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3>رقم خطأ</h3>
+      <div class="count">2</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+
+    <div class="status-card total">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <h3>إجمالي الأرقام</h3>
+      <div class="count">47</div>
+      <select><option>كل المندوبين</option><option>مندوب 1</option><option>مندوب 2</option></select>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="statuses.js"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
