@@ -1,4 +1,3 @@
-// استدعاء واجهة إضافة المستخدم
 document.addEventListener('DOMContentLoaded', function() {
     const addUserForm = document.getElementById('add-user-form');
     if (!addUserForm) return;
@@ -52,10 +51,4 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.innerHTML = '<i class="fas fa-user-plus"></i> إضافة المستخدم';
         }
     });
-});
-app.post('/users', (req, res) => {
-  // استقبال البيانات من الواجهة
-  const user = req.body;
-  // حفظ أو معالجة البيانات
-  res.status(201).json({ message: 'تم إضافة المستخدم بنجاح', user });
 });
