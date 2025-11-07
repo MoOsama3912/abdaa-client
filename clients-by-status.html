@@ -184,6 +184,14 @@
             const searchInput = document.getElementById('search-input');
             const dateFilter = document.getElementById('date-filter');
             const delegateFilter = document.getElementById('delegate-filter');
+            const urlParams = new URLSearchParams(window.location.search);
+            const delegateParam = urlParams.get('delegate'); // could be name or id
+            const filterIndicatorContainer = document.createElement('div');
+            filterIndicatorContainer.id = 'filter-indicator';
+            filterIndicatorContainer.style.padding = '10px 20px';
+            filterIndicatorContainer.style.marginBottom = '10px';
+            filterIndicatorContainer.style.display = 'none';
+            document.querySelector('.content-container').insertBefore(filterIndicatorContainer, document.querySelector('.content-container').firstChild);
 
             // تحديث عداد الحالات
             function updateStatusCounts(clients) {
@@ -290,6 +298,27 @@
                     `).join('');
                 }
 
+                // عرض مؤشر الفلتر إذا تم تمرير مندوب بالباراميتر
+                function showFilterIndicator(name) {
+                    if (!filterIndicatorContainer) return;
+                    if (!name) {
+                        filterIndicatorContainer.style.display = 'none';
+                        filterIndicatorContainer.innerHTML = '';
+                        return;
+                    }
+                    filterIndicatorContainer.style.display = 'block';
+                    filterIndicatorContainer.innerHTML = `
+                        <strong>فلتر المندوب:</strong> ${name}
+                        <button id="clear-filter" style="margin-left:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--gray-300);background:white;cursor:pointer">مسح الفلتر</button>
+                    `;
+                    document.getElementById('clear-filter').addEventListener('click', () => {
+                        // remove delegate from URL and reload
+                        urlParams.delete('delegate');
+                        const newUrl = window.location.pathname + '?' + urlParams.toString();
+                        window.location.href = newUrl;
+                    });
+                }
+
                 // تطبيق البحث
                 function filterClients() {
                     const searchTerm = searchInput.value.toLowerCase();
@@ -299,6 +328,25 @@
                         client.name.toLowerCase().includes(searchTerm) ||
                         client.phone.includes(searchTerm)
                     );
+
+                    // تصفية حسب المندوب إذا تم تمرير باراميتر delegate (اسم أو id)
+                    if (delegateParam && delegateParam !== 'all') {
+                        const decoded = decodeURIComponent(delegateParam);
+                        filtered = filtered.filter(client => {
+                            // عدة حالات ممكنة لبنية الحقل delegate
+                            // 1) client.delegate === 'اسم' أو 'id'
+                            // 2) client.delegate is object { _id, name }
+                            const del = client.delegate || client.delegateId || client.delegate_id || client.delegateName || client.delegate_name;
+                            if (!del) return false;
+                            if (typeof del === 'string') {
+                                return del === decoded || del === decodeURIComponent(decoded) || del.toLowerCase() === decoded.toLowerCase();
+                            }
+                            if (typeof del === 'object') {
+                                return (del._id && del._id === decoded) || (del.name && del.name.toLowerCase() === decoded.toLowerCase());
+                            }
+                            return false;
+                        });
+                    }
 
                     // تصفية حسب التاريخ
                     if (dateValue !== 'all') {
@@ -330,7 +378,37 @@
                 searchInput.addEventListener('input', filterClients);
                 dateFilter.addEventListener('change', filterClients);
 
+                // عند تغيير فلتر المندوب من الـ select
+                delegateFilter.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    // إذا كان المستخدم اختار 'all'، نزيل الباراميتر
+                    if (val === 'all') {
+                        urlParams.delete('delegate');
+                        window.location.href = window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : '');
+                        return;
+                    }
+                    // نضيف id في الـ URL كـ delegate
+                    urlParams.set('delegate', val);
+                    window.location.href = window.location.pathname + '?' + urlParams.toString();
+                });
+
                 // عرض البيانات الأولية
+                // إذا مررنا مندوب بالباراميتر وحمل اسم المندوب بدل _id، حاول ضبط قيمة الـ select على خيار النص المطابق
+                if (delegateParam) {
+                    const decoded = decodeURIComponent(delegateParam);
+                    // حاول ضبط القيمة على id مطابق أولاً
+                    const optById = Array.from(delegateFilter.options).find(o => o.value === decoded);
+                    if (optById) {
+                        delegateFilter.value = optById.value;
+                    } else {
+                        // حاول العثور على خيار نصي مطابق للاسم
+                        const optByText = Array.from(delegateFilter.options).find(o => o.text === decoded || o.text.toLowerCase() === decoded.toLowerCase());
+                        if (optByText) delegateFilter.value = optByText.value;
+                    }
+                    // اعرض مؤشر الفلتر
+                    showFilterIndicator(decoded);
+                }
+
                 displayClients(data);
 
             } catch (err) {

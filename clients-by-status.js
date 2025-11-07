@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get('status');
+    const delegate = urlParams.get('delegate'); // may be name or id
     const statusTitleElement = document.getElementById('status-title');
     const clientsContainer = document.getElementById('clients-list');
     const searchInput = document.getElementById('search-input');
@@ -15,9 +16,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // دالة جلب العملاء من السيرفر
     async function fetchClients() {
         try {
-            const response = await fetch(`${window.API_BASE}/clients?status=${status}`);
+            // جلب جميع العملاء ثم تطبيق الفلترة محلياً حسب الحالة/المندوب
+            const response = await fetch(`${window.API_BASE}/clients`);
             if (!response.ok) throw new Error('فشل في جلب البيانات');
-            return await response.json();
+            const all = await response.json();
+
+            // فلترة حسب الحالة إذا كانت محددة
+            let filtered = all;
+            if (status) {
+                filtered = filtered.filter(c => c.status === status);
+            }
+
+            // فلترة حسب المندوب إذا كان موجوداً (يدعم كل من الاسم أو id)
+            if (delegate && delegate !== 'all') {
+                const decoded = decodeURIComponent(delegate);
+                filtered = filtered.filter(client => {
+                    const del = client.delegate || client.delegateId || client.delegate_id || client.delegateName || client.delegate_name;
+                    if (!del) return false;
+                    if (typeof del === 'string') {
+                        return del === decoded || del.toLowerCase() === decoded.toLowerCase();
+                    }
+                    if (typeof del === 'object') {
+                        return (del._id && del._id === decoded) || (del.name && del.name.toLowerCase() === decoded.toLowerCase());
+                    }
+                    return false;
+                });
+            }
+
+            return filtered;
         } catch (error) {
             console.error('خطأ:', error);
             return [];
