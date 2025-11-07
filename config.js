@@ -1,7 +1,7 @@
 // config.js
 
 // 1. تعريف عنوان الـ API الأساسي (مهم جداً للاتصالات)
-const API_BASE = 'https://abdaa-server.vercel.app';
+const API_BASE = 'https://abdaa-server.vercel.app/api';
 
 // 2. ضمان أن يكون المتغير متاحاً عالمياً في بيئة المتصفح
 // التحقق من "window" ضروري لضمان عدم حدوث خطأ إذا تم تشغيل هذا الملف في Node.js
