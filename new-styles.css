@@ -24,9 +24,9 @@
     --danger-color: #EF4444;     /* أحمر */
     --info-color: #0074D9;       /* أزرق */
     
-    /* ألوان الخلفية */
-    --bg-gradient: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
-    --bg-primary: var(--gray-50);
+    /* ألوان الخلفية - تم تعديلها لتتماشى مع لون الشعار */
+    --bg-gradient: linear-gradient(135deg, rgba(0,59,115,0.03) 0%, rgba(0,116,217,0.02) 100%);
+    --bg-primary: linear-gradient(180deg, rgba(0,59,115,0.04), rgba(255,255,255,0.0));
     --bg-secondary: #ffffff;
     --bg-accent: rgba(0, 59, 115, 0.02);
 }

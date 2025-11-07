@@ -7,40 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="new-styles.css">
     <style>
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card h3 {
-            margin: 0;
-            font-size: 1rem;
-            color: var(--gray-600);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-top: 10px;
-            color: var(--primary-color);
-        }
-
         .delegates-section {
             background: white;
             border-radius: 12px;
@@ -184,41 +150,8 @@
     <main class="content-container">
         <h2 id="status-title">إحصائيات العملاء</h2>
         
-        <!-- إحصائيات الحالات -->
-        <div class="stats-grid">
-            <div class="stat-card all-clients">
-                <h3>إجمالي العملاء</h3>
-                <div class="stat-number" id="total-clients">0</div>
-            </div>
-            <div class="stat-card status-waiting-call">
-                <h3>مكالمة منتظرة</h3>
-                <div class="stat-number" id="waiting-call-count">0</div>
-            </div>
-            <div class="stat-card status-interested">
-                <h3>مهتم متابعة</h3>
-                <div class="stat-number" id="interested-count">0</div>
-            </div>
-            <div class="stat-card status-not-interested">
-                <h3>غير مهتم</h3>
-                <div class="stat-number" id="not-interested-count">0</div>
-            </div>
-            <div class="stat-card status-thinking">
-                <h3>محتمل بيفكر</h3>
-                <div class="stat-number" id="thinking-count">0</div>
-            </div>
-            <div class="stat-card status-meeting">
-                <h3>مقابلة في المقر</h3>
-                <div class="stat-number" id="meeting-count">0</div>
-            </div>
-            <div class="stat-card status-confirmed">
-                <h3>تبرع مؤكد</h3>
-                <div class="stat-number" id="confirmed-count">0</div>
-            </div>
-            <div class="stat-card status-wrong-number">
-                <h3>رقم خطأ</h3>
-                <div class="stat-number" id="wrong-number-count">0</div>
-            </div>
-        </div>
+        <!-- هذه الصفحة تعرض العملاء حسب الحالة فقط. بطاقات الإحصائيات توجد في لوحة التحكم (Dashboard) فقط. -->
+        <p class="note">للاطلاع على إحصائيات الحالات انتقل إلى <a href="dashboard.html">الصفحة الرئيسية</a>.</p>
 
         <!-- المندوبين -->
         <div class="delegates-section">
