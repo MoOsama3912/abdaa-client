@@ -6,6 +6,96 @@
     <title>العملاء حسب الحالة - Abdaa Entalek</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="new-styles.css">
+    <style>
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .client-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .client-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .client-info h3 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+        }
+
+        .client-info p {
+            margin: 5px 0;
+            color: var(--gray-600);
+        }
+
+        .client-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .edit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .edit-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        #search-input, #date-filter {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            text-align: center;
+            padding: 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--gray-500);
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .filters-container {
+                flex-direction: column;
+            }
+
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
     <script src="config.js"></script>
 </head>
 <body>
@@ -31,7 +121,7 @@
     </main>
 
     <script src="config.js"></script>
-    <script></script>
+    <script>
         document.addEventListener('DOMContentLoaded', async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status');
@@ -47,11 +137,14 @@
             }
 
             try {
+                console.log('Fetching from:', window.API_BASE);
                 const res = await fetch(`${window.API_BASE}/clients?status=${encodeURIComponent(status)}`, {
                     method: 'GET',
                     headers: {
-                        'Accept': 'application/json'
-                    }
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
                 });
 
                 if (!res.ok) throw new Error('فشل في تحميل البيانات');
@@ -127,8 +220,20 @@
             } catch (err) {
                 console.error('خطأ:', err);
                 if (clientsList) {
-                    clientsList.innerHTML = '<p class="error-message">حدث خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.</p>';
+                    if (!window.API_BASE) {
+                        clientsList.innerHTML = '<p class="error-message">خطأ في التكوين: لم يتم تحديد عنوان API</p>';
+                    } else if (!navigator.onLine) {
+                        clientsList.innerHTML = '<p class="error-message">لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.</p>';
+                    } else {
+                        clientsList.innerHTML = '<p class="error-message">حدث خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.</p>';
+                    }
                 }
+                // محاولة إعادة التحميل تلقائياً بعد 5 ثوانٍ
+                setTimeout(() => {
+                    if (navigator.onLine) {
+                        location.reload();
+                    }
+                }, 5000);
             }
         });
 
