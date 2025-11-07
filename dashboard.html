@@ -16,6 +16,61 @@
       padding: 0;
     }
 
+    .page-header {
+      background-color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .logo-container img {
+      height: 50px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 35px 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #888;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary { background-color: #007bff; }
+    .btn-secondary { background-color: #6c757d; }
+
     .status-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -79,61 +134,6 @@
     .confirmed .icon { background: #20c997; }
     .wrong-number .icon { background: #6c757d; }
     .total .icon { background: #343a40; }
-
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .btn {
-      padding: 10px 15px;
-      border-radius: 6px;
-      text-decoration: none;
-      color: white;
-      font-weight: bold;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-primary { background-color: #007bff; }
-    .btn-secondary { background-color: #6c757d; }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background-color: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    .logo-container img {
-      height: 50px;
-    }
-
-    .search-box {
-      position: relative;
-      width: 300px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 8px 35px 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #888;
-    }
   </style>
 </head>
 <body>
@@ -153,22 +153,64 @@
 
   <div class="quick-actions">
     <a href="add-client.html" class="btn btn-primary"><i class="fas fa-user-plus"></i> إضافة عميل جديد</a>
+    <a href="add-user.html" class="btn btn-primary"><i class="fas fa-user-cog"></i> إضافة مستخدم جديد</a>
     <a href="statistics.html" class="btn btn-primary"><i class="fas fa-chart-bar"></i> الإحصائيات</a>
     <a href="advanced-analytics.html" class="btn btn-primary"><i class="fas fa-chart-line"></i> التحليلات المتقدمة</a>
     <a href="delegates.html" class="btn btn-primary"><i class="fas fa-users"></i> المندوبين</a>
-    <button id="refresh-btn" class="btn btn-secondary" title="تحديث الإحصائيات"><i class="fas fa-sync-alt"></i> تحديث</button>
-    <label style="display:inline-flex;align-items:center;gap:6px;">
-      <input type="checkbox" id="auto-refresh-toggle"> تحديث تلقائي
-    </label>
   </div>
 
   <div class="status-cards">
-    <!-- البطاقات كما هي بدون تغيير في المحتوى -->
-    <!-- انسخ البطاقات من نسختك الحالية داخل هذا القسم -->
-  </div>
+    <div class="status-card waiting-call" onclick="location.href='clients-by-status.html?status=مكالمة منتظرة'">
+      <div class="icon"><i class="fas fa-phone-volume"></i></div>
+      <h3>مكالمة منتظرة</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
 
-  <script src="config.js"></script>
-  <script src="statuses.js"></script>
-  <script src="dashboard.js"></script>
-</body>
-</html>
+    <div class="status-card interested" onclick="location.href='clients-by-status.html?status=مهتم متابعة'">
+      <div class="icon"><i class="fas fa-user-check"></i></div>
+      <h3>مهتم متابعة</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
+
+    <div class="status-card not-interested" onclick="location.href='clients-by-status.html?status=غير مهتم'">
+      <div class="icon"><i class="fas fa-user-times"></i></div>
+      <h3>غير مهتم</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
+
+    <div class="status-card thinking" onclick="location.href='clients-by-status.html?status=محتمل بيفكر'">
+      <div class="icon"><i class="fas fa-user-clock"></i></div>
+      <h3>محتمل بيفكر</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
+
+    <div class="status-card meeting" onclick="location.href='clients-by-status.html?status=مقابلة في المقر'">
+      <div class="icon"><i class="fas fa-building"></i></div>
+      <h3>مقابلة في المقر</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
+
+    <div class="status-card confirmed" onclick="location.href='clients-by-status.html?status=تبرع مؤكد'">
+      <div class="icon"><i class="fas fa-hand-holding-usd"></i></div>
+      <h3>تبرع مؤكد</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
+
+    <div class="status-card wrong-number" onclick="location.href='clients-by-status.html?status=رقم خطأ'">
+      <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3>رقم خطأ</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
+    </div>
+
+    <div class="status-card total" onclick="location.href='all-clients.html'">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <h3>إجمالي العملاء</h3>
+      <div class="count">0</div>
+      <select><option>كل المندوبين</option></select>
