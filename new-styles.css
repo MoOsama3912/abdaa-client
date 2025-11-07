@@ -32,8 +32,8 @@
 }
 
 body {
-    font-family: 'Cairo', 'Almarai', sans-serif;
-    background: var(--bg-gradient);
+    font-family: 'Cairo', 'Almarai', sans-serif !important;
+    background: var(--bg-gradient) !important;
     color: var(--primary-dark);
     line-height: 1.6;
     margin: 0;

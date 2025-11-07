@@ -1,11 +1,12 @@
-// التأكد من تحميل API_BASE
-if (!window.API_BASE) {
-    console.error('خطأ: لم يتم تحميل عنوان API بشكل صحيح');
-}
-
-// التأكد من وجود النموذج
-const addClientForm = document.getElementById("add-client-form");
-if (addClientForm) {
+// انتظار تحميل الصفحة بالكامل
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('تم تحميل الصفحة:', window.API_BASE);
+    
+    const addClientForm = document.getElementById("add-client-form");
+    if (!addClientForm) {
+        console.error('لم يتم العثور على نموذج إضافة العميل');
+        return;
+    }
     // إضافة مستمع للتحقق من الاتصال
     window.addEventListener('online', function() {
         const msg = document.getElementById("success-msg");
@@ -13,6 +14,7 @@ if (addClientForm) {
             msg.textContent = "تم استعادة الاتصال بالإنترنت";
             msg.style.color = 'green';
         }
+      });
     });
 
     window.addEventListener('offline', function() {
@@ -84,4 +86,3 @@ if (addClientForm) {
       }
     }
   });
-}
