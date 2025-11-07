@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -7,21 +8,34 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="form-container">
+  <main class="form-container">
     <h2>تعديل بيانات العميل</h2>
-    <input type="text" id="name" placeholder="اسم العميل" />
-    <input type="text" id="phone" placeholder="رقم الهاتف" />
-    <select id="status">
-      <option value="مهتم">مهتم</option>
-      <option value="غير مهتم">غير مهتم</option>
-      <option value="حجز مؤكد">حجز مؤكد</option>
-      <option value="مكالمة لاحقة">مكالمة لاحقة</option>
-    </select>
-    <textarea id="notes" placeholder="ملاحظات"></textarea>
-    <button onclick="updateClient()">حفظ التعديلات</button>
-    <p id="update-msg"></p>
-  </div>
+    <form id="edit-client-form">
+      <input type="text" id="name" placeholder="اسم العميل" required>
+      <input type="text" id="phone" placeholder="رقم الهاتف" required>
+      <select id="status">
+        <option>مكالمة منتظرة</option>
+        <option>مهتم متابعة</option>
+        <option>غير مهتم</option>
+        <option>محتمل بيفكر</option>
+        <option>مقابلة في المقر</option>
+        <option>تبرع مؤكد</option>
+        <option>رقم خطأ</option>
+      </select>
+      <input type="text" id="delegate" placeholder="اسم المندوب">
+      <textarea id="notes" placeholder="ملاحظات إضافية"></textarea>
+      <button type="submit">💾 حفظ التعديلات</button>
+    </form>
+  </main>
 
+  <script src="config.js"></script>
   <script src="edit-client.js"></script>
+
+  <footer style="text-align:center; margin-top:12px;">
+    <img src="images/logo.png" alt="Abdaa Entalek Logo" style="height:60px;">
+    <div style="margin-top:8px;"><a href="dashboard.html" style="padding:10px 20px; background-color:#007bff; color:white; text-decoration:none; border-radius:5px;">🔙 رجوع للقائمة الرئيسية</a></div>
+  </footer>
+
 </body>
 </html>
+

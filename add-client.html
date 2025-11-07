@@ -5,23 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>إضافة عميل جديد - Abdaa Entalek</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="form-container">
     <h2>إضافة عميل جديد</h2>
-    <input type="text" id="name" placeholder="اسم العميل" />
-    <input type="text" id="phone" placeholder="رقم الهاتف" />
-    <select id="status">
-      <option value="مهتم">مهتم</option>
-      <option value="غير مهتم">غير مهتم</option>
-      <option value="حجز مؤكد">حجز مؤكد</option>
-      <option value="مكالمة لاحقة">مكالمة لاحقة</option>
-    </select>
-    <textarea id="notes" placeholder="ملاحظات"></textarea>
-    <button onclick="addClient()">إضافة</button>
-    <p id="success-msg"></p>
+    <form id="add-client-form">
+      <input type="text" id="name" placeholder="اسم العميل" required />
+      <input type="text" id="phone" placeholder="رقم الهاتف" required />
+      <select id="status">
+        <option value="مهتم">مهتم</option>
+        <option value="غير مهتم">غير مهتم</option>
+        <option value="حجز مؤكد">حجز مؤكد</option>
+        <option value="مكالمة لاحقة">مكالمة لاحقة</option>
+      </select>
+      <textarea id="notes" placeholder="ملاحظات"></textarea>
+      <button type="submit">إضافة</button>
+      <p id="success-msg"></p>
+    </form>
   </div>
 
   <script src="add-client.js"></script>
+
+  <footer style="text-align: center; margin-top: 10px;">
+    <img src="images/logo.png" alt="Abdaa Entalek Logo" style="height: 60px;">
+    <div style="margin-top:10px;"><a href="dashboard.html" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">🔙 رجوع للقائمة الرئيسية</a></div>
+  </footer>
+
 </body>
 </html>
