@@ -19,23 +19,47 @@ if (addClientForm) {
     }
 
     try {
-      const res = await fetch(`${window.API_BASE || 'http://localhost:5000'}/clients`, {
+      // إظهار رسالة التحميل
+      if (msg) {
+        msg.textContent = "جاري إضافة العميل...";
+        msg.style.color = 'blue';
+      }
+
+      // التحقق من توفر الاتصال بالإنترنت
+      if (!navigator.onLine) {
+        throw new Error("لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.");
+      }
+
+      const res = await fetch(`${window.API_BASE}/clients`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify(client)
       });
 
-      if (!res.ok) throw new Error('Network response was not ok');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("استجابة السيرفر:", res.status, errorData);
+        throw new Error(errorData.message || 'حدث خطأ في الاتصال بالسيرفر. يرجى المحاولة مرة أخرى.');
+      }
 
       const data = await res.json();
-      if (msg) { msg.textContent = "✅ تم إضافة العميل بنجاح"; msg.style.color = 'green'; }
-      console.log(data);
+      if (msg) { 
+        msg.textContent = "✅ تم إضافة العميل بنجاح";
+        msg.style.color = 'green';
+      }
+      console.log("تم إضافة العميل بنجاح:", data);
 
-      // clear fields
+      // مسح الحقول
       addClientForm.reset();
     } catch (err) {
       console.error("❌ خطأ في الإضافة:", err);
-      alert("حدث خطأ أثناء الإضافة");
+      if (msg) {
+        msg.textContent = err.message || "حدث خطأ أثناء الإضافة. يرجى المحاولة مرة أخرى لاحقاً.";
+        msg.style.color = 'red';
+      }
     }
   });
 }
