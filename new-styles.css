@@ -1,22 +1,44 @@
-/* تنسيقات عامة */
+/* تنسيقات عامة مستوحاة من ألوان اللوجو */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap');
 
 :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --success-color: #28a745;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
-    --light-bg: #f8f9fa;
-    --dark-text: #343a40;
+    /* ألوان مستوحاة من اللوجو */
+    --primary-color: #003B73;    /* أزرق غامق */
+    --primary-light: #0074D9;    /* أزرق فاتح */
+    --primary-dark: #001F3F;     /* أزرق داكن */
+    --accent-color: #FFB400;     /* ذهبي/برتقالي */
+    --accent-light: #FFD700;     /* ذهبي فاتح */
+    
+    /* تدرجات رمادية متناسقة */
+    --gray-50: #f8fafc;
+    --gray-100: #f0f2f5;
+    --gray-200: #e4e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    
+    /* ألوان الحالات */
+    --success-color: #10B981;    /* أخضر */
+    --warning-color: #FFB400;    /* برتقالي */
+    --danger-color: #EF4444;     /* أحمر */
+    --info-color: #0074D9;       /* أزرق */
+    
+    /* ألوان الخلفية */
+    --bg-gradient: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    --bg-primary: var(--gray-50);
+    --bg-secondary: #ffffff;
+    --bg-accent: rgba(0, 59, 115, 0.02);
 }
 
 body {
     font-family: 'Cairo', 'Almarai', sans-serif;
-    background-color: var(--light-bg);
+    background: var(--bg-gradient);
+    color: var(--primary-dark);
+    line-height: 1.6;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
 }
 
 /* هيدر الصفحة */
