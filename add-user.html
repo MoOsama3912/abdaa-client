@@ -113,15 +113,12 @@
 
                 const data = await response.json();
                 
-                if (!response.ok) {
-                    throw new Error(data.message || data.error || 'حدث خطأ في إضافة المستخدم');
-
                 if (response.ok) {
                     messageDiv.className = 'alert alert-success';
                     messageDiv.textContent = 'تم إضافة المستخدم بنجاح!';
                     e.target.reset();
                 } else {
-                    throw new Error(data.message || 'حدث خطأ أثناء إضافة المستخدم');
+                    throw new Error(data.message || data.error || 'حدث خطأ في إضافة المستخدم');
                 }
             } catch (error) {
                 messageDiv.className = 'alert alert-danger';
