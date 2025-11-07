@@ -1,4 +1,3 @@
-// Dashboard client script: load clients from API, render and filter
 let allClients = [];
 
 async function fetchClients() {
@@ -15,46 +14,38 @@ async function fetchClients() {
   }
 }
 
-  document.addEventListener('DOMContentLoaded', async function() {
-    try {
-      // initial fetch to populate everything via fetchClients
-      await fetchClients();
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    await fetchClients();
 
-      // تحديث البحث السريع
-      const quickSearch = document.getElementById('quick-search');
-      if (quickSearch) {
-        quickSearch.addEventListener('input', async function() {
-          const searchTerm = this.value.trim();
-          if (searchTerm.length < 2) return;
+    const quickSearch = document.getElementById('quick-search');
+    if (quickSearch) {
+      quickSearch.addEventListener('input', async function() {
+        const searchTerm = this.value.trim();
+        if (searchTerm.length < 2) return;
 
-          try {
-            const searchResponse = await fetch(`${window.API_BASE}/clients/search?q=${encodeURIComponent(searchTerm)}`);
-            if (!searchResponse.ok) throw new Error('فشل في البحث');
-            const results = await searchResponse.json();
-                    
-            // عرض نتائج البحث (يمكنك تخصيص طريقة العرض)
-            console.log('نتائج البحث:', results);
-          } catch (error) {
-            console.error('خطأ في البحث:', error);
-          }
-        });
-      }
-
-    } catch (error) {
-      console.error('خطأ:', error);
-      // عرض رسالة خطأ للمستخدم
-      alert('حدث خطأ في تحميل البيانات. يرجى تحديث الصفحة.');
+        try {
+          const searchResponse = await fetch(`${window.API_BASE}/clients/search?q=${encodeURIComponent(searchTerm)}`);
+          if (!searchResponse.ok) throw new Error('فشل في البحث');
+          const results = await searchResponse.json();
+          console.log('نتائج البحث:', results);
+        } catch (error) {
+          console.error('خطأ في البحث:', error);
+        }
+      });
     }
-  });
+  } catch (error) {
+    console.error('خطأ:', error);
+    alert('حدث خطأ في تحميل البيانات. يرجى تحديث الصفحة.');
+  }
+});
 
-// render status cards into #status-cards using window.STATUSES
 function renderStatusCards() {
   const container = document.getElementById('status-cards');
   if (!container) return;
   const list = window.STATUSES || [];
   container.innerHTML = '';
 
-  // total card
   const totalCard = document.createElement('div');
   totalCard.className = 'status-card total';
   totalCard.innerHTML = `
@@ -66,7 +57,6 @@ function renderStatusCards() {
   list.forEach(s => {
     const card = document.createElement('div');
     card.className = 'status-card';
-    // add a stable english slug class (used by CSS) when available
     const slug = s.slug || (s.key || '').replace(/\s+/g, '-').toLowerCase();
     if (slug) card.classList.add(slug);
     card.setAttribute('data-status', s.key);
@@ -79,16 +69,13 @@ function renderStatusCards() {
   });
 }
 
-// updateStats will populate counts inside rendered status cards
 function updateStats() {
   const counts = {};
   allClients.forEach(c => { counts[c.status] = (counts[c.status] || 0) + 1; });
 
-  // set total
   const totalEl = document.querySelector('.count[data-status="__total"]');
   if (totalEl) totalEl.textContent = allClients.length || 0;
 
-  // update each status card by data-status
   const cards = document.querySelectorAll('.count[data-status]');
   cards.forEach(el => {
     const key = el.getAttribute('data-status');
@@ -162,29 +149,3 @@ async function deleteClient(id) {
     alert('حدث خطأ أثناء الحذف');
   }
 }
-
-window.addEventListener('load', fetchClients);
-
-// Auto-refresh support
-let autoRefreshInterval = null;
-function startAutoRefresh(intervalMs = 30000) {
-  stopAutoRefresh();
-  autoRefreshInterval = setInterval(() => {
-    if (document.visibilityState === 'visible') fetchClients();
-  }, intervalMs);
-}
-
-function stopAutoRefresh() {
-  if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const refreshBtn = document.getElementById('refresh-btn');
-  const autoToggle = document.getElementById('auto-refresh-toggle');
-  if (refreshBtn) refreshBtn.addEventListener('click', () => fetchClients());
-  if (autoToggle) {
-    autoToggle.addEventListener('change', (e) => {
-      if (e.target.checked) startAutoRefresh(30000); else stopAutoRefresh();
-    });
-  }
-});
