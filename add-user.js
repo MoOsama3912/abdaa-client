@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!window.API_BASE) throw new Error('خطأ في التكوين: API_BASE غير معرف');
             if (!navigator.onLine) throw new Error('لا يوجد اتصال بالإنترنت');
 
-            const response = await fetch(`${window.API_BASE}/users`, {
+            const response = await fetch('https://abdaa-server.vercel.app/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
