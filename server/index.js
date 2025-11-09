@@ -7,12 +7,8 @@ const cors = require('cors');
 const app = express();
 
 // 1. تفعيل CORS (تم التحقق: هذا الجزء صحيح تمامًا)
-app.use(cors({
-    origin: 'https://abdaa-client.vercel.app', // السماح فقط لهذا الأصل
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
-    credentials: true,
-    optionsSuccessStatus: 204 
-}));
+app.use(cors());
+
 
 // 2. تفعيل قراءة JSON (إلزامي لطلبات POST والبيانات المرسلة)
 // هذا السطر يسمح للسيرفر بفهم وقراءة البيانات المرسلة في جسم الطلب (req.body)
