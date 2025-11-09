@@ -6,7 +6,12 @@
     <title>العملاء حسب الحالة - Abdaa Entalek</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="new-styles.css">
+    <!-- Font Awesome (يجب التأكد من أن هذا الرابط يعمل لديك) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* (... التنسيقات السابقة موجودة هنا ...) */
+        
         .delegates-section {
             background: white;
             border-radius: 12px;
@@ -47,11 +52,11 @@
 
         /* تنسيق حالات العملاء */
         .status-waiting-call { border-right: 4px solid #3B82F6; }
-        .status-interested { border-right: 4px solid #10B981; }
+        .status-interested-followup { border-right: 4px solid #10B981; } /* تم تعديل الكلاس ليتطابق */
         .status-not-interested { border-right: 4px solid #EF4444; }
-        .status-thinking { border-right: 4px solid #F59E0B; }
-        .status-meeting { border-right: 4px solid #8B5CF6; }
-        .status-confirmed { border-right: 4px solid #059669; }
+        .status-potential-thinking { border-right: 4px solid #F59E0B; } /* تم تعديل الكلاس ليتطابق */
+        .status-office-meeting { border-right: 4px solid #8B5CF6; } /* تم تعديل الكلاس ليتطابق */
+        .status-confirmed-donation { border-right: 4px solid #059669; } /* تم تعديل الكلاس ليتطابق */
         .status-wrong-number { border-right: 4px solid #6B7280; }
         .all-clients { border-right: 4px solid var(--primary-color); }
 
@@ -105,7 +110,7 @@
             padding: 0 20px;
         }
 
-        #search-input, #date-filter {
+        #search-input, #date-filter, #delegate-filter { /* تم إضافة #delegate-filter هنا */
             padding: 8px 12px;
             border: 1px solid var(--gray-300);
             border-radius: 4px;
@@ -127,6 +132,36 @@
             padding: 40px;
         }
 
+        /* 🛑 --- بداية التنسيقات الجديدة للأزرار --- 🛑 */
+
+        .data-management-container {
+            display: flex;
+            flex-wrap: wrap; /* للسماح بالالتفاف في الشاشات الصغيرة */
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin: 0 20px 20px 20px;
+            gap: 15px;
+        }
+
+        .export-buttons,
+        .import-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* إخفاء input الرفع الحقيقي */
+        #upload-excel-input {
+            display: none;
+        }
+
+        /* جعل الـ label يظهر كزر */
+        .import-buttons label.btn {
+            cursor: pointer;
+        }
+
         @media (max-width: 768px) {
             .filters-container {
                 flex-direction: column;
@@ -135,7 +170,62 @@
             .clients-grid {
                 grid-template-columns: 1fr;
             }
+            
+            /* تنسيق أزرار الإدارة للشاشات الصغيرة */
+            .data-management-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .export-buttons,
+            .import-buttons {
+                flex-direction: column;
+            }
+            .import-buttons label.btn,
+            .import-buttons a.btn {
+                text-align: center;
+            }
         }
+        
+        /* 🛑 --- تنسيقات وضع الطباعة --- 🛑 */
+        @media print {
+            /* إخفاء كل شيء لا نريده في الطباعة */
+            .page-header,
+            .delegates-section,
+            .filters-container,
+            .data-management-container,
+            .client-actions,
+            .back-button,
+            .note,
+            #filter-indicator {
+                display: none !important;
+            }
+
+            /* إظهار المحتوى المراد طباعته فقط */
+            .clients-grid {
+                grid-template-columns: 1fr !important;
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .client-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid; /* منع تقسيم البطاقة بين الصفحات */
+            }
+            
+            .content-container {
+                margin: 0;
+                padding: 0;
+            }
+            
+            h2#status-title {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+        
     </style>
     <script src="config.js"></script>
 </head>
@@ -150,7 +240,6 @@
     <main class="content-container">
         <h2 id="status-title">إحصائيات العملاء</h2>
         
-        <!-- هذه الصفحة تعرض العملاء حسب الحالة فقط. بطاقات الإحصائيات توجد في لوحة التحكم (Dashboard) فقط. -->
         <p class="note">للاطلاع على إحصائيات الحالات انتقل إلى <a href="dashboard.html">الصفحة الرئيسية</a>.</p>
 
         <!-- المندوبين -->
@@ -172,269 +261,352 @@
                 <option value="month">هذا الشهر</option>
             </select>
         </div>
+        
+        <!-- 🛑 --- بداية منطقة أزرار إدارة البيانات الجديدة --- 🛑 -->
+        <div class="data-management-container">
+            <!-- أزرار التحميل والطباعة -->
+            <div class="export-buttons">
+                <button id="print-btn" class="btn btn-secondary"><i class="fas fa-print"></i> طباعة الصفحة</button>
+                <button id="export-excel-btn" class="btn btn-primary"><i class="fas fa-file-excel"></i> تحميل Excel</button>
+                <button id="export-pdf-btn" class="btn btn-primary"><i class="fas fa-file-pdf"></i> تحميل PDF</button>
+            </div>
+            
+            <!-- أزرار الرفع والمثال -->
+            <div class="import-buttons">
+                <!-- هذا الـ label سيفتح input الرفع المخفي -->
+                <label for="upload-excel-input" class="btn btn-primary">
+                    <i class="fas fa-file-upload"></i> رفع ملف Excel
+                </label>
+                <input type="file" id="upload-excel-input" accept=".xlsx, .xls">
+                
+                <!-- زر تحميل المثال (يجب عليك وضع ملف المثال في هذا المسار) -->
+                <a href="/templates/example.xlsx" id="download-example-link" class="btn btn-secondary" download>
+                    <i class="fas fa-file-download"></i> تحميل مثال
+                </a>
+            </div>
+        </div>
+        <!-- 🛑 --- نهاية منطقة أزرار إدارة البيانات --- 🛑 -->
+
 
         <!-- قائمة العملاء -->
         <div id="clients-list" class="clients-grid"></div>
     </main>
 
     <script src="config.js"></script>
+    <!-- 🛑 --- بداية التعديلات على JavaScript --- 🛑 -->
     <script>
+        // دالة التعديل (يجب أن تكون متاحة عالمياً)
+        function editClient(id) {
+            window.location.href = `edit-client.html?id=${id}`;
+        }
+        // -------------------------------------------------------------
+
+        /**
+         * دالة جلب البيانات مع آلية المحاولة مرة أخرى (Retry) باستخدام Exponential Backoff
+         * @param {string} url - عنوان URL للجلب.
+         * @param {object} options - خيارات fetch.
+         * @param {number} retries - عدد المحاولات القصوى.
+         */
+        async function fetchWithRetry(url, options = {}, retries = 3) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        // إذا كان الاستجابة 404 أو 500 أو أي خطأ آخر، ارفع خطأ للمحاولة مرة أخرى
+                        throw new Error(`HTTP error! status: ${response.status} for URL: ${url}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i < retries - 1) {
+                        // حساب وقت الانتظار (2^i ثوانٍ)
+                        const delay = Math.pow(2, i) * 1000;
+                        console.log(`[Fetch Retry] محاولة جلب فاشلة للرابط: ${url}. المحاولة رقم ${i + 1}/${retries}. الانتظار ${delay / 1000} ثوانٍ...`);
+                        // انتظر لمدة (Delay) قبل المحاولة التالية
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        // آخر محاولة فشلت، ارفع الخطأ النهائي
+                        throw new Error("Failed to fetch after multiple retries: " + error.message);
+                    }
+                }
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', async function() {
             const clientsList = document.getElementById('clients-list');
             const searchInput = document.getElementById('search-input');
             const dateFilter = document.getElementById('date-filter');
             const delegateFilter = document.getElementById('delegate-filter');
+            const statusTitleEl = document.getElementById('status-title'); 
+            const delegatesListEl = document.getElementById('delegates-list');
+
             const urlParams = new URLSearchParams(window.location.search);
-            const delegateParam = urlParams.get('delegate'); // could be name or id
+            const statusParam = urlParams.get('status');
+            const delegateParam = urlParams.get('delegate');
+
             const filterIndicatorContainer = document.createElement('div');
             filterIndicatorContainer.id = 'filter-indicator';
-            filterIndicatorContainer.style.padding = '10px 20px';
-            filterIndicatorContainer.style.marginBottom = '10px';
+            filterIndicatorContainer.className = 'note';
+            filterIndicatorContainer.style.margin = '0 20px 20px 20px';
             filterIndicatorContainer.style.display = 'none';
-            document.querySelector('.content-container').insertBefore(filterIndicatorContainer, document.querySelector('.content-container').firstChild);
+            document.querySelector('.content-container').insertBefore(filterIndicatorContainer, statusTitleEl.nextSibling);
 
-            // تحديث عداد الحالات
-            function updateStatusCounts(clients) {
-                const counts = {
-                    total: clients.length,
-                    'مكالمة منتظرة': 0,
-                    'مهتم متابعة': 0,
-                    'غير مهتم': 0,
-                    'محتمل بيفكر': 0,
-                    'مقابلة في المقر': 0,
-                    'تبرع مؤكد': 0,
-                    'رقم خطأ': 0
-                };
-
-                clients.forEach(client => {
-                    if (counts.hasOwnProperty(client.status)) {
-                        counts[client.status]++;
-                    }
+            let allClients = []; // لتخزين جميع العملاء (بيانات أولية)
+            let initialFilteredClients = []; // لتخزين العملاء بعد الفلترة الأولية
+            let allDelegates = []; // لتخزين المندوبين
+            
+            // ----------------------------------------------------------------
+            // 1. وظائف العرض والمؤشرات
+            // ----------------------------------------------------------------
+            function showFilterIndicator(name) {
+                if (!filterIndicatorContainer) return;
+                if (!name) {
+                    filterIndicatorContainer.style.display = 'none';
+                    return;
+                }
+                filterIndicatorContainer.style.display = 'block';
+                filterIndicatorContainer.innerHTML = `
+                    <strong>فلتر المندوب المُطبق:</strong> ${name}
+                    <button id="clear-delegate-filter" class="edit-btn" style="margin-right:12px;padding:6px 10px;font-size:0.9em">مسح فلتر المندوب</button>
+                `;
+                document.getElementById('clear-delegate-filter').addEventListener('click', () => {
+                    urlParams.delete('delegate');
+                    window.location.href = window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : '');
                 });
-
-                document.getElementById('total-clients').textContent = counts.total;
-                document.getElementById('waiting-call-count').textContent = counts['مكالمة منتظرة'];
-                document.getElementById('interested-count').textContent = counts['مهتم متابعة'];
-                document.getElementById('not-interested-count').textContent = counts['غير مهتم'];
-                document.getElementById('thinking-count').textContent = counts['محتمل بيفكر'];
-                document.getElementById('meeting-count').textContent = counts['مقابلة في المقر'];
-                document.getElementById('confirmed-count').textContent = counts['تبرع مؤكد'];
-                document.getElementById('wrong-number-count').textContent = counts['رقم خطأ'];
             }
 
-            // تحديث عنوان الصفحة
-            if (statusTitle && status) {
-                statusTitle.textContent = `العملاء - ${status}`;
-                document.title = `العملاء - ${status} - Abdaa Entalek`;
-            }
-
-            try {
-                // جلب المندوبين
-                const delegatesRes = await fetch(`${window.API_BASE}/delegates`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    mode: 'cors'
-                });
-
-                if (!delegatesRes.ok) throw new Error('فشل في تحميل بيانات المندوبين');
-                const delegates = await delegatesRes.json();
-
-                // تحديث قائمة المندوبين
-                const delegatesList = document.getElementById('delegates-list');
-                if (delegatesList) {
-                    delegatesList.innerHTML = delegates.map(delegate => `
-                        <div class="delegate-card">
-                            <div class="delegate-name">${delegate.name}</div>
-                            <div class="delegate-stats">
-                                عدد العملاء: ${delegate.clientsCount || 0}
-                            </div>
-                        </div>
-                    `).join('');
-
-                    // تحديث فلتر المندوبين
-                    delegateFilter.innerHTML = `
-                        <option value="all">كل المندوبين</option>
-                        ${delegates.map(d => `<option value="${d._id}">${d.name}</option>`).join('')}
-                    `;
+            function displayClients(clients) {
+                if (clients.length === 0) {
+                    clientsList.innerHTML = '<p class="no-results">لا يوجد عملاء يطابقون شروط التصفية.</p>';
+                    return;
                 }
 
-                // جلب العملاء
-                const res = await fetch(`${window.API_BASE}/clients`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    mode: 'cors'
-                });
+                clientsList.innerHTML = clients.map(client => {
+                    const delegateName = (typeof client.delegate === 'object' && client.delegate !== null) 
+                                        ? client.delegate.name 
+                                        : (allDelegates.find(d => d._id === client.delegate)?.name || client.delegate || 'غير محدد');
+                    
+                    const statusSlug = (client.status || '').replace(/\s+/g, '-').toLowerCase() || 'all-clients';
 
-                if (!res.ok) throw new Error('فشل في تحميل البيانات');
-                const data = await res.json();
-
-                if (!clientsList) return;
-
-                // عرض العملاء
-                function displayClients(clients) {
-                    if (clients.length === 0) {
-                        clientsList.innerHTML = '<p class="no-results">لا يوجد عملاء في هذه الحالة</p>';
-                        return;
-                    }
-
-                    clientsList.innerHTML = clients.map(client => `
-                        <div class="client-card">
+                    return `
+                        <div class="client-card status-${statusSlug}">
                             <div class="client-info">
                                 <h3>${client.name}</h3>
-                                <p class="phone">📱 ${client.phone}</p>
+                                <p class="status"><strong>الحالة:</strong> ${client.status || 'غير معروف'}</p>
+                                <p class="delegate"><strong>المندوب:</strong> ${delegateName}</p>
+                                <p class="phone">📱 ${client.phone || 'غير متوفر'}</p>
                                 <p class="date">📅 ${new Date(client.createdAt).toLocaleDateString('ar-EG')}</p>
-                                ${client.notes ? `<p class="notes">📝 ${client.notes}</p>` : ''}
+                                ${client.notes ? `<p class="notes">📝 ${client.notes.substring(0, 50)}${client.notes.length > 50 ? '...' : ''}</p>` : ''}
                             </div>
                             <div class="client-actions">
-                                <button onclick="editClient('${client._id}')" class="edit-btn">تعديل</button>
+                                <button onclick="editClient('${client._id}')" class="edit-btn">تعديل العميل</button>
                             </div>
                         </div>
+                    `;
+                }).join('');
+            }
+
+            // ----------------------------------------------------------------
+            // 2. دالة الفلترة الرئيسية (تجمع الكل)
+            // ----------------------------------------------------------------
+            function applyAllFilters() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const dateValue = dateFilter.value;
+                const selectedDelegate = delegateFilter.value;
+
+                let filtered = initialFilteredClients; // ابدأ دائماً بالفلتر الأولي (الحالة + المندوب من الـ URL)
+
+                if (searchTerm) {
+                    filtered = filtered.filter(client => 
+                        (client.name && client.name.toLowerCase().includes(searchTerm)) ||
+                        (client.phone && client.phone.includes(searchTerm))
+                    );
+                }
+
+                // الفلترة بالـ select (مختلف عن الفلتر الأولي من الـ URL)
+                if (selectedDelegate !== 'all') {
+                    filtered = filtered.filter(client => {
+                        const del = client.delegate;
+                        if (!del) return false;
+                        return (typeof del === 'object' && del !== null && del._id === selectedDelegate) || (del === selectedDelegate);
+                    });
+                }
+                
+                if (dateValue !== 'all') {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    filtered = filtered.filter(client => {
+                        const createdAt = new Date(client.createdAt);
+                        let filterDate;
+                        switch(dateValue) {
+                            case 'today': filterDate = today; break;
+                            case 'week': filterDate = new Date(today); filterDate.setDate(filterDate.getDate() - 7); break;
+                            case 'month': 
+                                filterDate = new Date(today); 
+                                filterDate.setMonth(filterDate.getMonth() - 1); // Fix: use filterDate instead of monthAgo
+                                break;
+                            default: return true;
+                        }
+                        return createdAt >= filterDate;
+                    });
+                }
+                
+                displayClients(filtered);
+            }
+
+            // ----------------------------------------------------------------
+            // 3. جلب البيانات والتهيئة
+            // ----------------------------------------------------------------
+            try {
+                // 🛑 --- بداية الإصلاح (إضافة المحاولة مرة أخرى وتأكيد مسار /api/) --- 🛑
+                const API_URL_BASE = window.API_BASE || 'https://abdaa-server.vercel.app';
+                
+                const [clientsRes, delegatesRes] = await Promise.all([
+                    // نحاول مع مسار /api/clients لأنها البنية الأكثر شيوعاً لخوادم الـ REST
+                    fetchWithRetry(`${API_URL_BASE}/api/clients`, { mode: 'cors' }, 3),
+                    fetchWithRetry(`${API_URL_BASE}/api/delegates`, { mode: 'cors' }, 3)
+                ]);
+                // 🛑 --- نهاية الإصلاح --- 🛑
+
+                // لم نعد نحتاج للتحقق من ok هنا لأن fetchWithRetry يتولى رفع الخطأ إذا لم تكن الاستجابة جيدة بعد المحاولات
+                
+                allClients = await clientsRes.json();
+                allDelegates = await delegatesRes.json();
+                initialFilteredClients = [...allClients]; // ابدأ بالكل
+
+                // تعبئة فلتر المندوب (بـ _id)
+                if (delegateFilter) {
+                    delegateFilter.innerHTML = `
+                        <option value="all">كل المندوبين</option>
+                        ${allDelegates.map(d => `<option value="${d._id}">${d.name}</option>`).join('')}
+                    `;
+                }
+
+                // عرض بطاقات المندوبين
+                if (delegatesListEl) {
+                    delegatesListEl.innerHTML = allDelegates.map(delegate => `
+                        <a href="clients-by-status.html?delegate=${delegate._id}&status=${statusParam || 'all'}" class="delegate-card">
+                            <div class="delegate-name">${delegate.name}</div>
+                            <div class="delegate-stats">${delegate.clientsCount ? `عملاء (${delegate.clientsCount})` : 'لا يوجد عملاء'}</div>
+                        </a>
                     `).join('');
                 }
 
-                // عرض مؤشر الفلتر إذا تم تمرير مندوب بالباراميتر
-                function showFilterIndicator(name) {
-                    if (!filterIndicatorContainer) return;
-                    if (!name) {
-                        filterIndicatorContainer.style.display = 'none';
-                        filterIndicatorContainer.innerHTML = '';
-                        return;
-                    }
-                    filterIndicatorContainer.style.display = 'block';
-                    filterIndicatorContainer.innerHTML = `
-                        <strong>فلتر المندوب:</strong> ${name}
-                        <button id="clear-filter" style="margin-left:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--gray-300);background:white;cursor:pointer">مسح الفلتر</button>
-                    `;
-                    document.getElementById('clear-filter').addEventListener('click', () => {
-                        // remove delegate from URL and reload
-                        urlParams.delete('delegate');
-                        const newUrl = window.location.pathname + '?' + urlParams.toString();
-                        window.location.href = newUrl;
-                    });
+                // ----------------------------------------------------------------
+                // 4. تطبيق الفلتر الأولي بناءً على الـ URL
+                // ----------------------------------------------------------------
+                let delegateNameForTitle = '';
+
+                if (statusParam && statusParam !== 'all') {
+                    initialFilteredClients = initialFilteredClients.filter(client => client.status === statusParam);
+                    statusTitleEl.textContent = `العملاء - ${statusParam}`;
+                    document.title = `العملاء - ${statusParam} - Abdaa Entalek`;
+                } else {
+                    statusTitleEl.textContent = `كل العملاء`;
+                    document.title = `كل العملاء - Abdaa Entalek`;
                 }
 
-                // تطبيق البحث
-                function filterClients() {
-                    const searchTerm = searchInput.value.toLowerCase();
-                    const dateValue = dateFilter.value;
+                if (delegateParam && delegateParam !== 'all') {
+                    const decodedDelegate = decodeURIComponent(delegateParam);
+                    const matchedDelegate = allDelegates.find(d => d._id === decodedDelegate || d.name === decodedDelegate);
                     
-                    let filtered = data.filter(client => 
-                        client.name.toLowerCase().includes(searchTerm) ||
-                        client.phone.includes(searchTerm)
-                    );
-
-                    // تصفية حسب المندوب إذا تم تمرير باراميتر delegate (اسم أو id)
-                    if (delegateParam && delegateParam !== 'all') {
-                        const decoded = decodeURIComponent(delegateParam);
-                        filtered = filtered.filter(client => {
-                            // عدة حالات ممكنة لبنية الحقل delegate
-                            // 1) client.delegate === 'اسم' أو 'id'
-                            // 2) client.delegate is object { _id, name }
-                            const del = client.delegate || client.delegateId || client.delegate_id || client.delegateName || client.delegate_name;
-                            if (!del) return false;
-                            if (typeof del === 'string') {
-                                return del === decoded || del === decodeURIComponent(decoded) || del.toLowerCase() === decoded.toLowerCase();
-                            }
-                            if (typeof del === 'object') {
-                                return (del._id && del._id === decoded) || (del.name && del.name.toLowerCase() === decoded.toLowerCase());
-                            }
-                            return false;
+                    if (matchedDelegate) {
+                        delegateFilter.value = matchedDelegate._id;
+                        delegateNameForTitle = matchedDelegate.name;
+                        initialFilteredClients = initialFilteredClients.filter(client => {
+                            const del = client.delegate;
+                            return (typeof del === 'object' && del !== null && del._id === matchedDelegate._id) || (del === matchedDelegate._id);
                         });
                     }
-
-                    // تصفية حسب التاريخ
-                    if (dateValue !== 'all') {
-                        const now = new Date();
-                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                        filtered = filtered.filter(client => {
-                            const createdAt = new Date(client.createdAt);
-                            switch(dateValue) {
-                                case 'today':
-                                    return createdAt >= today;
-                                case 'week':
-                                    const weekAgo = new Date(today);
-                                    weekAgo.setDate(weekAgo.getDate() - 7);
-                                    return createdAt >= weekAgo;
-                                case 'month':
-                                    const monthAgo = new Date(today);
-                                    monthAgo.setMonth(monthAgo.getMonth() - 1);
-                                    return createdAt >= monthAgo;
-                                default:
-                                    return true;
-                            }
-                        });
-                    }
-
-                    displayClients(filtered);
+                    showFilterIndicator(delegateNameForTitle || decodedDelegate);
                 }
 
-                // إضافة مستمعي الأحداث
-                searchInput.addEventListener('input', filterClients);
-                dateFilter.addEventListener('change', filterClients);
-
-                // عند تغيير فلتر المندوب من الـ select
+                // ----------------------------------------------------------------
+                // 5. ربط مستمعي الأحداث والتشغيل الأولي
+                // ----------------------------------------------------------------
+                
+                searchInput.addEventListener('input', applyAllFilters);
+                dateFilter.addEventListener('change', applyAllFilters);
+                
+                // (ملاحظة: فلتر المندوب من الـ select يعيد تحميل الصفحة لتحديث الـ URL)
                 delegateFilter.addEventListener('change', (e) => {
                     const val = e.target.value;
-                    // إذا كان المستخدم اختار 'all'، نزيل الباراميتر
                     if (val === 'all') {
                         urlParams.delete('delegate');
-                        window.location.href = window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : '');
-                        return;
+                    } else {
+                        urlParams.set('delegate', val);
                     }
-                    // نضيف id في الـ URL كـ delegate
-                    urlParams.set('delegate', val);
-                    window.location.href = window.location.pathname + '?' + urlParams.toString();
+                    window.location.href = window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : '');
                 });
 
-                // عرض البيانات الأولية
-                // إذا مررنا مندوب بالباراميتر وحمل اسم المندوب بدل _id، حاول ضبط قيمة الـ select على خيار النص المطابق
-                if (delegateParam) {
-                    const decoded = decodeURIComponent(delegateParam);
-                    // حاول ضبط القيمة على id مطابق أولاً
-                    const optById = Array.from(delegateFilter.options).find(o => o.value === decoded);
-                    if (optById) {
-                        delegateFilter.value = optById.value;
-                    } else {
-                        // حاول العثور على خيار نصي مطابق للاسم
-                        const optByText = Array.from(delegateFilter.options).find(o => o.text === decoded || o.text.toLowerCase() === decoded.toLowerCase());
-                        if (optByText) delegateFilter.value = optByText.value;
-                    }
-                    // اعرض مؤشر الفلتر
-                    showFilterIndicator(decoded);
-                }
+                // 🛑 --- بداية ربط الأزرار الجديدة --- 🛑
+                const printBtn = document.getElementById('print-btn');
+                const exportExcelBtn = document.getElementById('export-excel-btn');
+                const exportPdfBtn = document.getElementById('export-pdf-btn');
+                const uploadExcelInput = document.getElementById('upload-excel-input');
 
-                displayClients(data);
+                // أ. زر الطباعة
+                printBtn.addEventListener('click', () => {
+                    // التنسيقات في @media print ستتولى إخفاء العناصر
+                    window.print();
+                });
+
+                // ب. زر تحميل Excel (يتطلب مكتبة SheetJS/xlsx.js)
+                exportExcelBtn.addEventListener('click', () => {
+                    alert('وظيفة تحميل Excel (قيد التطوير) - تتطلب مكتبة خارجية.');
+                    // 1. يجب جلب مكتبة (مثل SheetJS)
+                    // 2. تجميع البيانات الحالية المعروضة (من initialFilteredClients بعد تطبيق الفلاتر الإضافية)
+                    console.log('Exporting data to Excel...', initialFilteredClients); 
+                    // 3. إنشاء ملف Excel وتحميله
+                });
+
+                // ج. زر تحميل PDF (يتطلب مكتبة jsPDF)
+                exportPdfBtn.addEventListener('click', () => {
+                    alert('وظيفة تحميل PDF (قيد التطوير) - تتطلب مكتبة خارجية.');
+                    // 1. يجب جلب مكتبة (مثل jsPDF و jsPDF-AutoTable)
+                    console.log('Exporting data to PDF...', initialFilteredClients);
+                    // 2. إنشاء ملف PDF وتحميله
+                });
+
+                // د. زر رفع Excel
+                uploadExcelInput.addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    alert(`تم اختيار ملف: ${file.name}. وظيفة الرفع (قيد التطوير).`);
+                    console.log('File selected:', file);
+                    
+                    // 1. يجب جلب مكتبة (مثل SheetJS) لقراءة الملف
+                    // 2. إنشاء FormData
+                    const formData = new FormData();
+                    formData.append('clientsFile', file);
+
+                    // 3. إرسال البيانات إلى السيرفر (مسار جديد يجب إنشاؤه على السيرفر)
+                    try {
+                        /*
+                        const response = await fetch(`${API_URL_BASE}/api/clients/bulk-upload`, {
+                            method: 'POST',
+                            body: formData
+                            // (لا تضع Content-Type: application/json هنا)
+                        });
+                        if (!response.ok) throw new Error('فشل رفع الملف');
+                        alert('تم رفع الملف ومعالجته بنجاح!');
+                        location.reload(); // إعادة تحميل الصفحة
+                        */
+                    } catch (uploadError) {
+                        console.error('فشل الرفع:', uploadError);
+                        alert('حدث خطأ أثناء رفع الملف.');
+                    }
+                });
+                // 🛑 --- نهاية ربط الأزرار الجديدة --- 🛑
+
+                // العرض الأولي للبيانات
+                displayClients(initialFilteredClients);
 
             } catch (err) {
-                console.error('خطأ:', err);
-                if (clientsList) {
-                    if (!window.API_BASE) {
-                        clientsList.innerHTML = '<p class="error-message">خطأ في التكوين: لم يتم تحديد عنوان API</p>';
-                    } else if (!navigator.onLine) {
-                        clientsList.innerHTML = '<p class="error-message">لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.</p>';
-                    } else {
-                        clientsList.innerHTML = '<p class="error-message">حدث خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.</p>';
-                    }
-                }
-                // محاولة إعادة التحميل تلقائياً بعد 5 ثوانٍ
-                setTimeout(() => {
-                    if (navigator.onLine) {
-                        location.reload();
-                    }
-                }, 5000);
+                console.error('خطأ فادح في تحميل البيانات:', err);
+                clientsList.innerHTML = `<p class="error-message">حدث خطأ في تحميل البيانات (${err.message}). يرجى التأكد من تشغيل السيرفر ومن صحة مسار API (بـ /api/ أو بدونها) وحل مشكلة CORS.</p>`;
             }
         });
-
-        // دالة التعديل
-        function editClient(id) {
-            window.location.href = `edit-client.html?id=${id}`;
-        }
     </script>
 </body>
 </html>
