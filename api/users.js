@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: 'https://abdaa-client.vercel.app',
+  origin: 'https://abdaa-client.vercel.app/api',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept']
 }));
