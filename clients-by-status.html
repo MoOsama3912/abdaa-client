@@ -4,257 +4,375 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>العملاء حسب الحالة - Abdaa Entalek</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="new-styles.css">
-    <!-- Font Awesome (يجب التأكد من أن هذا الرابط يعمل لديك) -->
+    <!-- تضمين Tailwind CSS للحصول على تصميم عصري ومتجاوب -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- 🛑 يجب عليك التأكد أن هذا الملف موجود ويحتوي على: var API_BASE = 'http://localhost:3000/api'; 🛑 -->
+    <script src="config.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3B82F6', // ازرق
+                        'secondary': '#10B981', // اخضر
+                        'danger': '#EF4444', // احمر
+                        'warning': '#F59E0B', // اصفر/برتقالي
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Tahoma', 'Arial', 'sans-serif'], 
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* (... التنسيقات السابقة موجودة هنا ...) */
-        
+        /* التنسيقات الأساسية لتطبيق RTL ودمج الأنماط المخصصة */
+        body {
+            font-family: 'Inter', Tahoma, Arial, sans-serif;
+            background-color: #f4f7f9;
+            direction: rtl;
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* التعديل: استخدام الأنماط المباشرة بدلاً من @apply لتجنب خطأ المحرر */
+        /* ---------------------------------------------------------------------- */
+
+        /* تنسيق الأزرار الأساسي */
+        .btn {
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            transition-property: all; 
+            transition-duration: 200ms; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+        .btn-primary {
+            background-color: #3B82F6; /* primary */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563EB; /* hover:bg-blue-700 */
+        }
+        .btn-secondary {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #374151; /* gray-800 */
+            border: 1px solid #D1D5DB; /* border-gray-300 */
+        }
+        .btn-secondary:hover {
+            background-color: #D1D5DB; /* hover:bg-gray-300 */
+        }
+
+        .page-header {
+            background-color: white; 
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            padding: 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
+        }
+
+        .content-container {
+            max-width: 1280px; /* max-w-7xl */
+            margin-left: auto; 
+            margin-right: auto; 
+            padding: 16px;
+        }
+
+        .logo-container {
+            /* شعار نصي بدلاً من صورة */
+            font-size: 24px; 
+            font-weight: 800; /* font-extrabold */
+            color: #3B82F6; /* primary */
+        }
+
+        /* المندوبين */
         .delegates-section {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 0 20px 20px 20px;
+            background-color: white; 
+            border-radius: 12px; /* rounded-xl */
+            padding: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
         }
 
         .delegates-grid {
-            display: grid;
+            display: grid; 
+            gap: 16px; 
+            margin-top: 16px;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
         }
 
         .delegate-card {
-            background: var(--gray-50);
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
+            /* تعديل نمط الـ a ليتصرف كبطاقة */
+            background-color: #F9FAFB; /* gray-50 */
+            padding: 12px; 
+            border-radius: 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            display: block; 
+            text-decoration: none; 
+            transition-property: background-color; 
+            transition-duration: 150ms;
+        }
+        .delegate-card:hover {
+            background-color: #F3F4F6; /* hover:bg-gray-100 */
         }
 
         .delegate-name {
-            font-weight: bold;
-            color: var(--primary-color);
+            font-weight: 700; 
+            color: #3B82F6; /* primary */
         }
 
         .delegate-stats {
-            font-size: 0.9rem;
-            color: var(--gray-500);
+            font-size: 14px; 
+            color: #6B7280; /* gray-500 */
         }
-
+        
+        /* قائمة العملاء */
         .clients-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            display: grid; 
+            gap: 20px; 
             padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         }
-
-        /* تنسيق حالات العملاء */
-        .status-waiting-call { border-right: 4px solid #3B82F6; }
-        .status-interested-followup { border-right: 4px solid #10B981; } /* تم تعديل الكلاس ليتطابق */
-        .status-not-interested { border-right: 4px solid #EF4444; }
-        .status-potential-thinking { border-right: 4px solid #F59E0B; } /* تم تعديل الكلاس ليتطابق */
-        .status-office-meeting { border-right: 4px solid #8B5CF6; } /* تم تعديل الكلاس ليتطابق */
-        .status-confirmed-donation { border-right: 4px solid #059669; } /* تم تعديل الكلاس ليتطابق */
-        .status-wrong-number { border-right: 4px solid #6B7280; }
-        .all-clients { border-right: 4px solid var(--primary-color); }
 
         .client-card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
+            background-color: white; 
+            border-radius: 8px; 
+            padding: 16px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+            transition-property: all; 
+            transition-duration: 200ms; 
+            position: relative;
         }
-
         .client-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05); /* hover:shadow-lg */
+            transform: translateY(-2px); /* hover:-translate-y-0.5 */
         }
-
+        
         .client-info h3 {
-            margin: 0 0 10px 0;
-            color: var(--primary-color);
+            font-size: 18px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: #3B82F6; /* primary */
         }
 
         .client-info p {
-            margin: 5px 0;
-            color: var(--gray-600);
+            margin-top: 4px; 
+            margin-bottom: 4px; 
+            font-size: 14px; 
+            color: #4B5563; /* gray-600 */
         }
 
         .client-actions {
-            margin-top: 15px;
-            display: flex;
+            margin-top: 16px; 
+            display: flex; 
             justify-content: flex-end;
         }
 
         .edit-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s ease;
+            background-color: #3B82F6; /* primary */
+            color: white; 
+            padding-top: 8px; 
+            padding-bottom: 8px; 
+            padding-left: 16px; 
+            padding-right: 16px; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            transition-property: background-color; 
+            transition-duration: 200ms;
         }
-
         .edit-btn:hover {
-            background: var(--primary-light);
+            background-color: #2563EB; /* hover:bg-blue-700 */
         }
 
         .filters-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 0 20px;
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-bottom: 20px; 
+            padding-left: 16px; 
+            padding-right: 16px;
         }
 
-        #search-input, #date-filter, #delegate-filter { /* تم إضافة #delegate-filter هنا */
-            padding: 8px 12px;
-            border: 1px solid var(--gray-300);
-            border-radius: 4px;
-            flex: 1;
+        @media (min-width: 640px) { /* sm breakpoint */
+            .filters-container {
+                flex-direction: row;
+            }
         }
 
+        #search-input, #date-filter, #delegate-filter {
+            padding: 10px; 
+            border: 1px solid #D1D5DB; /* border-gray-300 */
+            border-radius: 8px; 
+            flex-grow: 1;
+        }
+        
+        /* أزرار إدارة البيانات */
+        .data-management-container {
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 16px; 
+            background-color: #F3F4F6; /* gray-100 */
+            border-radius: 12px; /* rounded-xl */
+            margin-left: 16px; 
+            margin-right: 16px; 
+            margin-bottom: 20px; 
+            gap: 16px;
+        }
+        
+        .export-buttons, .import-buttons {
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .export-buttons, .import-buttons {
+                flex-direction: row;
+            }
+        }
+        
+        /* تنسيق حالات العملاء (كلاسات الحدود الجانبية) */
+        .status-في-انتظار-اتصال { border-right: 4px solid #3B82F6; } /* ازرق */
+        .status-مهتم---للمتابعة { border-right: 4px solid #10B981; } /* اخضر */
+        .status-غير-مهتم { border-right: 4px solid #EF4444; } /* احمر */
+        .status-مقابلة-في-المكتب { border-right: 4px solid #8B5CF6; } /* بنفسجي */
+        .status-تبرع-مؤكد { border-right: 4px solid #059669; } /* اخضر داكن */
+        .all-clients { border-right: 4px solid #3B82F6; }
+
+        /* رسائل الخطأ والتحذير */
         .error-message {
-            color: var(--danger-color);
-            text-align: center;
-            padding: 20px;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: 8px;
-            margin: 20px;
+            color: #EF4444; /* danger */
+            text-align: center; 
+            padding: 20px; 
+            background-color: #FEE2E2; /* red-100 */
+            border-radius: 8px; 
+            margin: 20px; 
+            border: 1px solid #FCA5A5; /* border-red-300 */
         }
 
         .no-results {
-            text-align: center;
-            color: var(--gray-500);
+            text-align: center; 
+            color: #6B7280; /* gray-500 */
             padding: 40px;
         }
-
-        /* 🛑 --- بداية التنسيقات الجديدة للأزرار --- 🛑 */
-
-        .data-management-container {
-            display: flex;
-            flex-wrap: wrap; /* للسماح بالالتفاف في الشاشات الصغيرة */
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            margin: 0 20px 20px 20px;
-            gap: 15px;
+        
+        .note {
+            font-size: 14px; 
+            color: #374151; /* gray-700 */
+            padding: 8px; 
+            text-align: center;
         }
-
-        .export-buttons,
-        .import-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
+        
         /* إخفاء input الرفع الحقيقي */
         #upload-excel-input {
             display: none;
         }
-
-        /* جعل الـ label يظهر كزر */
-        .import-buttons label.btn {
-            cursor: pointer;
+        
+        /* تنسيق صندوق الرسائل المنبثق */
+        #custom-message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white; 
+            padding: 24px; 
+            border-radius: 12px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+            border: 1px solid #E5E7EB; /* border-gray-200 */
+            width: 91.666667%; /* w-11/12 */
+            max-width: 448px; /* max-w-md */
+            text-align: center;
+            display: none;
         }
-
-        @media (max-width: 768px) {
-            .filters-container {
-                flex-direction: column;
-            }
-
-            .clients-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            /* تنسيق أزرار الإدارة للشاشات الصغيرة */
-            .data-management-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .export-buttons,
-            .import-buttons {
-                flex-direction: column;
-            }
-            .import-buttons label.btn,
-            .import-buttons a.btn {
-                text-align: center;
-            }
+        #custom-message-box button {
+            background-color: #3B82F6; /* primary */
+            color: white; 
+            margin-top: 16px; 
+            padding-left: 16px; 
+            padding-right: 16px; 
+            padding-top: 8px; 
+            padding-bottom: 8px; 
+            border-radius: 8px; 
+        }
+        #custom-message-box button:hover {
+            background-color: #2563EB; /* hover:bg-blue-700 */
         }
         
-        /* 🛑 --- تنسيقات وضع الطباعة --- 🛑 */
+        /* وضع الطباعة */
         @media print {
-            /* إخفاء كل شيء لا نريده في الطباعة */
-            .page-header,
-            .delegates-section,
-            .filters-container,
-            .data-management-container,
-            .client-actions,
-            .back-button,
-            .note,
-            #filter-indicator {
+            .page-header, .delegates-section, .filters-container, .data-management-container, .client-actions, .back-button, .note, #filter-indicator {
                 display: none !important;
             }
-
-            /* إظهار المحتوى المراد طباعته فقط */
             .clients-grid {
                 grid-template-columns: 1fr !important;
                 box-shadow: none;
                 border: none;
                 padding: 0;
                 margin: 0;
+                display: block; 
             }
-            
             .client-card {
                 box-shadow: none;
                 border: 1px solid #ccc;
-                page-break-inside: avoid; /* منع تقسيم البطاقة بين الصفحات */
+                margin-bottom: 10px; 
+                page-break-inside: avoid; 
             }
-            
-            .content-container {
-                margin: 0;
-                padding: 0;
-            }
-            
-            h2#status-title {
-                text-align: center;
-                margin-bottom: 20px;
-            }
+            .content-container { margin: 0; padding: 0; width: 100%; }
+            h2#status-title { text-align: center; margin-bottom: 20px; display: block; }
         }
-        
     </style>
-    <script src="config.js"></script>
 </head>
 <body>
+    <!-- صندوق الرسائل المنبثق (بديل لـ alert) -->
+    <div id="custom-message-box">
+        <p id="message-text" class="text-gray-700"></p>
+        <button id="message-ok-btn">حسناً</button>
+    </div>
+
     <header class="page-header">
         <div class="logo-container">
-            <img src="images/logo.png" alt="Abdaa Entalek Logo">
+            Abdaa Entalek
         </div>
-        <a href="dashboard.html" class="back-button">🔙 رجوع للقائمة الرئيسية</a>
+        <a href="clients-by-status.html" class="back-button btn btn-secondary">🔙 رجوع للقائمة الرئيسية</a>
     </header>
 
     <main class="content-container">
-        <h2 id="status-title">إحصائيات العملاء</h2>
+        <h2 id="status-title" class="text-3xl font-extrabold text-gray-800 mb-6 text-center">إحصائيات العملاء</h2>
         
-        <p class="note">للاطلاع على إحصائيات الحالات انتقل إلى <a href="dashboard.html">الصفحة الرئيسية</a>.</p>
+        <p class="note">
+            يتم جلب البيانات من السيرفر على العنوان: <span id="api-base-display"></span>.
+        </p>
 
         <!-- المندوبين -->
         <div class="delegates-section">
-            <h3>المندوبين</h3>
-            <div id="delegates-list" class="delegates-grid"></div>
+            <h3 class="text-xl font-semibold mb-4 text-gray-700">المندوبين</h3>
+            <div id="delegates-list" class="delegates-grid">
+                 <!-- مؤشر تحميل -->
+                <p class="text-center text-gray-500 col-span-full" id="loading-delegates">جاري تحميل المندوبين...</p>
+            </div>
         </div>
 
         <!-- فلترة وبحث -->
         <div class="filters-container">
-            <input type="text" id="search-input" placeholder="بحث بالاسم أو رقم الهاتف">
-            <select id="delegate-filter">
+            <input type="text" id="search-input" placeholder="بحث بالاسم أو رقم الهاتف" class="flex-1">
+            <select id="delegate-filter" class="flex-1">
                 <option value="all">كل المندوبين</option>
             </select>
-            <select id="date-filter">
+            <select id="date-filter" class="flex-1">
                 <option value="all">كل التواريخ</option>
                 <option value="today">اليوم</option>
                 <option value="week">هذا الأسبوع</option>
@@ -262,7 +380,10 @@
             </select>
         </div>
         
-        <!-- 🛑 --- بداية منطقة أزرار إدارة البيانات الجديدة --- 🛑 -->
+        <!-- مؤشر الفلترة -->
+        <div id="filter-indicator" class="note hidden"></div>
+        
+        <!-- منطقة أزرار إدارة البيانات -->
         <div class="data-management-container">
             <!-- أزرار التحميل والطباعة -->
             <div class="export-buttons">
@@ -273,64 +394,111 @@
             
             <!-- أزرار الرفع والمثال -->
             <div class="import-buttons">
-                <!-- هذا الـ label سيفتح input الرفع المخفي -->
                 <label for="upload-excel-input" class="btn btn-primary">
                     <i class="fas fa-file-upload"></i> رفع ملف Excel
                 </label>
                 <input type="file" id="upload-excel-input" accept=".xlsx, .xls">
                 
-                <!-- زر تحميل المثال (يجب عليك وضع ملف المثال في هذا المسار) -->
-                <a href="/templates/example.xlsx" id="download-example-link" class="btn btn-secondary" download>
+                <button id="download-example-btn" class="btn btn-secondary">
                     <i class="fas fa-file-download"></i> تحميل مثال
-                </a>
+                </button>
             </div>
         </div>
-        <!-- 🛑 --- نهاية منطقة أزرار إدارة البيانات --- 🛑 -->
 
 
         <!-- قائمة العملاء -->
-        <div id="clients-list" class="clients-grid"></div>
+        <div id="clients-list" class="clients-grid">
+            <p class="text-center text-xl text-gray-500 col-span-full" id="loading-clients">جاري تحميل العملاء...</p>
+        </div>
     </main>
 
-    <script src="config.js"></script>
-    <!-- 🛑 --- بداية التعديلات على JavaScript --- 🛑 -->
     <script>
-        // دالة التعديل (يجب أن تكون متاحة عالمياً)
-        function editClient(id) {
-            window.location.href = `edit-client.html?id=${id}`;
-        }
-        // -------------------------------------------------------------
+        // ----------------------------------------------------------------
+        // وظيفة صندوق الرسائل المخصص (بديل لـ alert)
+        // ----------------------------------------------------------------
+        function customAlert(message) {
+            const box = document.getElementById('custom-message-box');
+            const text = document.getElementById('message-text');
+            const okBtn = document.getElementById('message-ok-btn');
 
-        /**
-         * دالة جلب البيانات مع آلية المحاولة مرة أخرى (Retry) باستخدام Exponential Backoff
-         * @param {string} url - عنوان URL للجلب.
-         * @param {object} options - خيارات fetch.
-         * @param {number} retries - عدد المحاولات القصوى.
-         */
-        async function fetchWithRetry(url, options = {}, retries = 3) {
+            text.textContent = message;
+            box.style.display = 'block';
+
+            return new Promise(resolve => {
+                okBtn.onclick = () => {
+                    box.style.display = 'none';
+                    resolve();
+                };
+            });
+        }
+        
+        // ----------------------------------------------------------------
+        // دالة التعديل (سيتم عرض رسالة لعدم توفر صفحة تعديل حقيقية)
+        // ----------------------------------------------------------------
+        function editClient(id) {
+            customAlert(`وظيفة التعديل غير متوفرة في هذا العرض التوضيحي. (${id} - يتطلب صفحة edit-client.html)`);
+        }
+        
+        // يجب أن تكون الدالة متاحة عالمياً
+        window.editClient = editClient;
+        
+        // ----------------------------------------------------------------
+        // محاكاة جلب البيانات باستخدام API الحقيقي (مع Exponential Backoff)
+        // ----------------------------------------------------------------
+        async function fetchWithRetry(url, retries = 3, delay = 1000) {
             for (let i = 0; i < retries; i++) {
                 try {
-                    const response = await fetch(url, options);
+                    const response = await fetch(url);
                     if (!response.ok) {
-                        // إذا كان الاستجابة 404 أو 500 أو أي خطأ آخر، ارفع خطأ للمحاولة مرة أخرى
-                        throw new Error(`HTTP error! status: ${response.status} for URL: ${url}`);
+                        // إذا كان الخطأ 404 أو غيره، ارمِ الخطأ مباشرة
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response;
+                    return await response.json();
                 } catch (error) {
                     if (i < retries - 1) {
-                        // حساب وقت الانتظار (2^i ثوانٍ)
-                        const delay = Math.pow(2, i) * 1000;
-                        console.log(`[Fetch Retry] محاولة جلب فاشلة للرابط: ${url}. المحاولة رقم ${i + 1}/${retries}. الانتظار ${delay / 1000} ثوانٍ...`);
-                        // انتظر لمدة (Delay) قبل المحاولة التالية
+                        // console.warn(`Fetch failed for ${url}. Retrying in ${delay / 1000}s...`);
                         await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Exponential backoff
                     } else {
-                        // آخر محاولة فشلت، ارفع الخطأ النهائي
-                        throw new Error("Failed to fetch after multiple retries: " + error.message);
+                        // الخطأ النهائي (يشمل خطأ CORS إذا لم يتم حله في السيرفر)
+                        throw new Error(`Failed to fetch (${error.message}). (after multiple retries: ${error.message}). يرجى التأكد من تشغيل السيرفر ومن صحة مسار API (${url}).`);
                     }
                 }
             }
         }
         
+        async function fetchClientData() {
+            // تحقق من تعريف API_BASE (تم تعريفه في config.js)
+            // نستخدم window.API_BASE لأننا نعتمد على أن config.js قد نشره
+            if (typeof window.API_BASE === 'undefined') {
+                throw new Error("API_BASE is not defined. Please ensure config.js is loaded correctly and defines 'var API_BASE'.");
+            }
+            
+            try {
+                // جلب العملاء والمندوبين بالتوازي
+                const [clients, delegates] = await Promise.all([
+                    fetchWithRetry(`${window.API_BASE}/clients`),
+                    fetchWithRetry(`${window.API_BASE}/delegates`)
+                ]);
+
+                return { clients, delegates };
+            } catch (error) {
+                // إعادة إطلاق الخطأ للتعامل معه في DOM
+                throw error;
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // الدوال المساعدة للتحويلات
+        // ----------------------------------------------------------------
+        
+        // تحويل الحالة العربية إلى صيغة Slug (لـ CSS Class)
+        function toStatusSlug(status) {
+            if (!status) return 'all-clients';
+            // إزالة الأحرف غير الأبجدية والرقمية، واستبدال المسافات والشرطات بالشرطة الواصلة
+            return status.replace(/[^\u0600-\u06FF\w\s-]/g, '').replace(/\s+/g, '-').toLowerCase();
+        }
+
         document.addEventListener('DOMContentLoaded', async function() {
             const clientsList = document.getElementById('clients-list');
             const searchInput = document.getElementById('search-input');
@@ -338,54 +506,68 @@
             const delegateFilter = document.getElementById('delegate-filter');
             const statusTitleEl = document.getElementById('status-title'); 
             const delegatesListEl = document.getElementById('delegates-list');
+            const filterIndicatorContainer = document.getElementById('filter-indicator');
+            const apiBaseDisplayEl = document.getElementById('api-base-display');
+
+            // عرض عنوان API في الملاحظة
+            if (typeof window.API_BASE !== 'undefined') {
+                 apiBaseDisplayEl.textContent = window.API_BASE;
+            }
+
+            const loadingClients = document.getElementById('loading-clients');
+            const loadingDelegates = document.getElementById('loading-delegates');
 
             const urlParams = new URLSearchParams(window.location.search);
             const statusParam = urlParams.get('status');
             const delegateParam = urlParams.get('delegate');
 
-            const filterIndicatorContainer = document.createElement('div');
-            filterIndicatorContainer.id = 'filter-indicator';
-            filterIndicatorContainer.className = 'note';
-            filterIndicatorContainer.style.margin = '0 20px 20px 20px';
-            filterIndicatorContainer.style.display = 'none';
-            document.querySelector('.content-container').insertBefore(filterIndicatorContainer, statusTitleEl.nextSibling);
-
-            let allClients = []; // لتخزين جميع العملاء (بيانات أولية)
-            let initialFilteredClients = []; // لتخزين العملاء بعد الفلترة الأولية
-            let allDelegates = []; // لتخزين المندوبين
+            let allClients = [];
+            // baseFilteredClients: هذه القائمة ستحتوي على العملاء بعد تطبيق الفلتر الأساسي (الحالة من الـ URL فقط)
+            let baseFilteredClients = []; 
+            let allDelegates = [];
             
             // ----------------------------------------------------------------
             // 1. وظائف العرض والمؤشرات
             // ----------------------------------------------------------------
             function showFilterIndicator(name) {
                 if (!filterIndicatorContainer) return;
-                if (!name) {
-                    filterIndicatorContainer.style.display = 'none';
+                
+                // إذا لم يكن هناك فلتر مندوب مطبق عبر الـ URL
+                if (!name || delegateFilter.value === 'all') { 
+                    filterIndicatorContainer.classList.add('hidden');
                     return;
                 }
-                filterIndicatorContainer.style.display = 'block';
+                
+                filterIndicatorContainer.classList.remove('hidden');
                 filterIndicatorContainer.innerHTML = `
                     <strong>فلتر المندوب المُطبق:</strong> ${name}
-                    <button id="clear-delegate-filter" class="edit-btn" style="margin-right:12px;padding:6px 10px;font-size:0.9em">مسح فلتر المندوب</button>
+                    <button id="clear-delegate-filter" class="edit-btn" style="margin-right:12px;padding:6px 10px;font-size:0.9em;background:#EF4444">مسح فلتر المندوب</button>
                 `;
+                // ربط حدث مسح الفلتر
                 document.getElementById('clear-delegate-filter').addEventListener('click', () => {
                     urlParams.delete('delegate');
+                    // إعادة التوجيه للحفاظ على الحالة نظيفة وإعادة تشغيل التصفية
                     window.location.href = window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : '');
                 });
             }
 
             function displayClients(clients) {
+                loadingClients.classList.add('hidden');
+                
                 if (clients.length === 0) {
                     clientsList.innerHTML = '<p class="no-results">لا يوجد عملاء يطابقون شروط التصفية.</p>';
                     return;
                 }
 
                 clientsList.innerHTML = clients.map(client => {
-                    const delegateName = (typeof client.delegate === 'object' && client.delegate !== null) 
-                                        ? client.delegate.name 
-                                        : (allDelegates.find(d => d._id === client.delegate)?.name || client.delegate || 'غير محدد');
+                    const delegateObj = allDelegates.find(d => d._id === client.delegate);
+                    const delegateName = delegateObj ? delegateObj.name : (client.delegate || 'غير محدد');
                     
-                    const statusSlug = (client.status || '').replace(/\s+/g, '-').toLowerCase() || 'all-clients';
+                    // استخدام الدالة الجديدة لتحويل الحالة إلى صيغة slug CSS
+                    const statusSlug = toStatusSlug(client.status);
+
+                    // تنسيق التاريخ
+                    const clientDate = client.createdAt ? new Date(client.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) : 'غير متوفر';
 
                     return `
                         <div class="client-card status-${statusSlug}">
@@ -394,7 +576,7 @@
                                 <p class="status"><strong>الحالة:</strong> ${client.status || 'غير معروف'}</p>
                                 <p class="delegate"><strong>المندوب:</strong> ${delegateName}</p>
                                 <p class="phone">📱 ${client.phone || 'غير متوفر'}</p>
-                                <p class="date">📅 ${new Date(client.createdAt).toLocaleDateString('ar-EG')}</p>
+                                <p class="date">📅 ${clientDate}</p>
                                 ${client.notes ? `<p class="notes">📝 ${client.notes.substring(0, 50)}${client.notes.length > 50 ? '...' : ''}</p>` : ''}
                             </div>
                             <div class="client-actions">
@@ -411,10 +593,12 @@
             function applyAllFilters() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const dateValue = dateFilter.value;
-                const selectedDelegate = delegateFilter.value;
+                const selectedDelegate = delegateFilter.value; // قيمة الفلتر من القائمة المنسدلة
+                
+                // نبدأ دائماً بالقائمة التي تم تصفيتها بالحالة من الـ URL فقط
+                let filtered = baseFilteredClients; 
 
-                let filtered = initialFilteredClients; // ابدأ دائماً بالفلتر الأولي (الحالة + المندوب من الـ URL)
-
+                // 1. فلتر البحث
                 if (searchTerm) {
                     filtered = filtered.filter(client => 
                         (client.name && client.name.toLowerCase().includes(searchTerm)) ||
@@ -422,31 +606,36 @@
                     );
                 }
 
-                // الفلترة بالـ select (مختلف عن الفلتر الأولي من الـ URL)
+                // 2. فلتر المندوب (من القائمة المنسدلة)
                 if (selectedDelegate !== 'all') {
-                    filtered = filtered.filter(client => {
-                        const del = client.delegate;
-                        if (!del) return false;
-                        return (typeof del === 'object' && del !== null && del._id === selectedDelegate) || (del === selectedDelegate);
-                    });
+                    filtered = filtered.filter(client => client.delegate === selectedDelegate);
                 }
                 
+                // 3. فلتر التاريخ
                 if (dateValue !== 'all') {
                     const now = new Date();
-                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    // يجب أن تكون اليوم بتوقيت منتصف الليل لبداية الحساب
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+                    
                     filtered = filtered.filter(client => {
                         const createdAt = new Date(client.createdAt);
-                        let filterDate;
+                        let filterDate = new Date(today.getTime()); // نسخة من اليوم
+
                         switch(dateValue) {
-                            case 'today': filterDate = today; break;
-                            case 'week': filterDate = new Date(today); filterDate.setDate(filterDate.getDate() - 7); break;
+                            case 'today': 
+                                // التاريخ بعد أو يساوي بداية اليوم
+                                return createdAt >= filterDate;
+                            case 'week': 
+                                // أسبوع مضى
+                                filterDate.setDate(filterDate.getDate() - 7);
+                                return createdAt >= filterDate;
                             case 'month': 
-                                filterDate = new Date(today); 
-                                filterDate.setMonth(filterDate.getMonth() - 1); // Fix: use filterDate instead of monthAgo
-                                break;
-                            default: return true;
+                                // شهر مضى
+                                filterDate.setMonth(filterDate.getMonth() - 1);
+                                return createdAt >= filterDate;
+                            default: 
+                                return true;
                         }
-                        return createdAt >= filterDate;
                     });
                 }
                 
@@ -457,154 +646,118 @@
             // 3. جلب البيانات والتهيئة
             // ----------------------------------------------------------------
             try {
-                // 🛑 --- بداية الإصلاح (إضافة المحاولة مرة أخرى وتأكيد مسار /api/) --- 🛑
-                const API_URL_BASE = window.API_BASE || 'https://abdaa-server.vercel.app';
+                // الانتظار حتى يتم جلب البيانات من الـ API
+                const data = await fetchClientData(); 
+                allClients = data.clients;
+                allDelegates = data.delegates;
                 
-                const [clientsRes, delegatesRes] = await Promise.all([
-                    // نحاول مع مسار /api/clients لأنها البنية الأكثر شيوعاً لخوادم الـ REST
-                    fetchWithRetry(`${API_URL_BASE}/api/clients`, { mode: 'cors' }, 3),
-                    fetchWithRetry(`${API_URL_BASE}/api/delegates`, { mode: 'cors' }, 3)
-                ]);
-                // 🛑 --- نهاية الإصلاح --- 🛑
+                // نبدأ بالقائمة الكاملة للعملاء
+                baseFilteredClients = [...allClients]; 
 
-                // لم نعد نحتاج للتحقق من ok هنا لأن fetchWithRetry يتولى رفع الخطأ إذا لم تكن الاستجابة جيدة بعد المحاولات
-                
-                allClients = await clientsRes.json();
-                allDelegates = await delegatesRes.json();
-                initialFilteredClients = [...allClients]; // ابدأ بالكل
-
-                // تعبئة فلتر المندوب (بـ _id)
+                // تعبئة فلتر المندوب
                 if (delegateFilter) {
                     delegateFilter.innerHTML = `
                         <option value="all">كل المندوبين</option>
                         ${allDelegates.map(d => `<option value="${d._id}">${d.name}</option>`).join('')}
                     `;
                 }
+                
+                // إخفاء مؤشر تحميل المندوبين
+                loadingDelegates.classList.add('hidden');
 
                 // عرض بطاقات المندوبين
                 if (delegatesListEl) {
-                    delegatesListEl.innerHTML = allDelegates.map(delegate => `
-                        <a href="clients-by-status.html?delegate=${delegate._id}&status=${statusParam || 'all'}" class="delegate-card">
-                            <div class="delegate-name">${delegate.name}</div>
-                            <div class="delegate-stats">${delegate.clientsCount ? `عملاء (${delegate.clientsCount})` : 'لا يوجد عملاء'}</div>
-                        </a>
-                    `).join('');
+                    delegatesListEl.innerHTML = allDelegates.map(delegate => {
+                        // استخدام count العملاء المرتبط بالمندوب (إذا كان متوفراً من الـ API)
+                        const count = delegate.clientsCount || 0; 
+                        
+                        // نستخدم statusParam في الرابط إذا كان موجوداً، وإلا لا نرسله
+                        const statusQuery = statusParam ? `&status=${statusParam}` : '';
+
+                        return `
+                            <a href="clients-by-status.html?delegate=${delegate._id}${statusQuery}" class="delegate-card">
+                                <div class="delegate-name">${delegate.name}</div>
+                                <div class="delegate-stats">عملاء (${count})</div>
+                            </a>
+                        `;
+                    }).join('');
                 }
 
                 // ----------------------------------------------------------------
-                // 4. تطبيق الفلتر الأولي بناءً على الـ URL
+                // 4. تطبيق الفلتر الأولي بناءً على الـ URL (الحالة والمندوب)
                 // ----------------------------------------------------------------
                 let delegateNameForTitle = '';
 
                 if (statusParam && statusParam !== 'all') {
-                    initialFilteredClients = initialFilteredClients.filter(client => client.status === statusParam);
-                    statusTitleEl.textContent = `العملاء - ${statusParam}`;
-                    document.title = `العملاء - ${statusParam} - Abdaa Entalek`;
+                    // الفلترة بالحالة فقط لإنشاء القائمة الأساسية baseFilteredClients
+                    baseFilteredClients = baseFilteredClients.filter(client => 
+                        toStatusSlug(client.status) === toStatusSlug(statusParam)
+                    );
+                    statusTitleEl.textContent = `العملاء - ${statusParam.replace(/-/g, ' ')}`;
+                    document.title = `العملاء - ${statusParam.replace(/-/g, ' ')} - Abdaa Entalek`;
                 } else {
                     statusTitleEl.textContent = `كل العملاء`;
-                    document.title = `كل العملاء - Abdaa Entalek`;
                 }
 
+                // إذا كان هناك فلتر مندوب في الـ URL، قم بتحديد القيمة في القائمة المنسدلة وعرض المؤشر
                 if (delegateParam && delegateParam !== 'all') {
-                    const decodedDelegate = decodeURIComponent(delegateParam);
-                    const matchedDelegate = allDelegates.find(d => d._id === decodedDelegate || d.name === decodedDelegate);
+                    const matchedDelegate = allDelegates.find(d => d._id === delegateParam);
                     
                     if (matchedDelegate) {
                         delegateFilter.value = matchedDelegate._id;
                         delegateNameForTitle = matchedDelegate.name;
-                        initialFilteredClients = initialFilteredClients.filter(client => {
-                            const del = client.delegate;
-                            return (typeof del === 'object' && del !== null && del._id === matchedDelegate._id) || (del === matchedDelegate._id);
-                        });
                     }
-                    showFilterIndicator(delegateNameForTitle || decodedDelegate);
+                    // عرض مؤشر الفلتر بعد تحديث القائمة المنسدلة
+                    showFilterIndicator(delegateNameForTitle || delegateParam);
                 }
 
                 // ----------------------------------------------------------------
                 // 5. ربط مستمعي الأحداث والتشغيل الأولي
                 // ----------------------------------------------------------------
                 
+                // ربط الفلاتر الديناميكية
                 searchInput.addEventListener('input', applyAllFilters);
                 dateFilter.addEventListener('change', applyAllFilters);
+                delegateFilter.addEventListener('change', applyAllFilters); 
                 
-                // (ملاحظة: فلتر المندوب من الـ select يعيد تحميل الصفحة لتحديث الـ URL)
-                delegateFilter.addEventListener('change', (e) => {
-                    const val = e.target.value;
-                    if (val === 'all') {
-                        urlParams.delete('delegate');
-                    } else {
-                        urlParams.set('delegate', val);
-                    }
-                    window.location.href = window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : '');
+
+                // ربط أزرار إدارة البيانات (رسائل توضيحية لعدم توفر وظائف الـ API)
+                document.getElementById('print-btn').addEventListener('click', () => { window.print(); });
+                
+                document.getElementById('export-excel-btn').addEventListener('click', () => {
+                    customAlert('وظيفة تحميل Excel (قيد التطوير) - تتطلب مكتبة خارجية لتصدير البيانات المعروضة حالياً.');
                 });
 
-                // 🛑 --- بداية ربط الأزرار الجديدة --- 🛑
-                const printBtn = document.getElementById('print-btn');
-                const exportExcelBtn = document.getElementById('export-excel-btn');
-                const exportPdfBtn = document.getElementById('export-pdf-btn');
-                const uploadExcelInput = document.getElementById('upload-excel-input');
-
-                // أ. زر الطباعة
-                printBtn.addEventListener('click', () => {
-                    // التنسيقات في @media print ستتولى إخفاء العناصر
-                    window.print();
+                document.getElementById('export-pdf-btn').addEventListener('click', () => {
+                    customAlert('وظيفة تحميل PDF (قيد التطوير) - تتطلب مكتبة خارجية لتصدير البيانات المعروضة حالياً.');
                 });
 
-                // ب. زر تحميل Excel (يتطلب مكتبة SheetJS/xlsx.js)
-                exportExcelBtn.addEventListener('click', () => {
-                    alert('وظيفة تحميل Excel (قيد التطوير) - تتطلب مكتبة خارجية.');
-                    // 1. يجب جلب مكتبة (مثل SheetJS)
-                    // 2. تجميع البيانات الحالية المعروضة (من initialFilteredClients بعد تطبيق الفلاتر الإضافية)
-                    console.log('Exporting data to Excel...', initialFilteredClients); 
-                    // 3. إنشاء ملف Excel وتحميله
+                document.getElementById('download-example-btn').addEventListener('click', () => {
+                    customAlert('وظيفة تحميل ملف المثال (قيد التطوير) - يجب توفير الملف في مسار /templates/example.xlsx.');
                 });
 
-                // ج. زر تحميل PDF (يتطلب مكتبة jsPDF)
-                exportPdfBtn.addEventListener('click', () => {
-                    alert('وظيفة تحميل PDF (قيد التطوير) - تتطلب مكتبة خارجية.');
-                    // 1. يجب جلب مكتبة (مثل jsPDF و jsPDF-AutoTable)
-                    console.log('Exporting data to PDF...', initialFilteredClients);
-                    // 2. إنشاء ملف PDF وتحميله
-                });
-
-                // د. زر رفع Excel
-                uploadExcelInput.addEventListener('change', async (event) => {
+                document.getElementById('upload-excel-input').addEventListener('change', async (event) => {
                     const file = event.target.files[0];
                     if (!file) return;
                     
-                    alert(`تم اختيار ملف: ${file.name}. وظيفة الرفع (قيد التطوير).`);
-                    console.log('File selected:', file);
-                    
-                    // 1. يجب جلب مكتبة (مثل SheetJS) لقراءة الملف
-                    // 2. إنشاء FormData
-                    const formData = new FormData();
-                    formData.append('clientsFile', file);
-
-                    // 3. إرسال البيانات إلى السيرفر (مسار جديد يجب إنشاؤه على السيرفر)
-                    try {
-                        /*
-                        const response = await fetch(`${API_URL_BASE}/api/clients/bulk-upload`, {
-                            method: 'POST',
-                            body: formData
-                            // (لا تضع Content-Type: application/json هنا)
-                        });
-                        if (!response.ok) throw new Error('فشل رفع الملف');
-                        alert('تم رفع الملف ومعالجته بنجاح!');
-                        location.reload(); // إعادة تحميل الصفحة
-                        */
-                    } catch (uploadError) {
-                        console.error('فشل الرفع:', uploadError);
-                        alert('حدث خطأ أثناء رفع الملف.');
-                    }
+                    customAlert(`تم اختيار ملف: ${file.name}. وظيفة الرفع (قيد التطوير) - تتطلب سيرفر Backend. لن يتم الرفع فعلياً في هذا العرض التوضيحي.`);
+                    event.target.value = ''; // مسح الملف من الإدخال
                 });
-                // 🛑 --- نهاية ربط الأزرار الجديدة --- 🛑
-
-                // العرض الأولي للبيانات
-                displayClients(initialFilteredClients);
+                
+                // العرض الأولي للبيانات (يطبق كل الفلاتر)
+                applyAllFilters();
 
             } catch (err) {
+                // معالجة الخطأ وعرض رسالة واضحة للمستخدم
                 console.error('خطأ فادح في تحميل البيانات:', err);
-                clientsList.innerHTML = `<p class="error-message">حدث خطأ في تحميل البيانات (${err.message}). يرجى التأكد من تشغيل السيرفر ومن صحة مسار API (بـ /api/ أو بدونها) وحل مشكلة CORS.</p>`;
+                loadingClients.classList.add('hidden');
+                loadingDelegates.classList.add('hidden');
+                clientsList.innerHTML = `<p class="error-message">
+                    حدث خطأ في تحميل البيانات: ${err.message}. 
+                    
+                    <br>
+                    يرجى **تعديل ملف config.js** لتعريف ` ;API_BASE = 'http://localhost:3000/api';` (للتشغيل المحلي) والتأكد من **تشغيل سيرفر Node.js** أولاً.
+                </p>`;
             }
         });
     </script>
